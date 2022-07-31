@@ -1,5 +1,5 @@
 const applicationName = "Schedules";
-const schedulesVersion = "3.1.0";
+const schedulesVersion = "latest";
 
 Uri schedulesLink =
     Uri.parse("https://raw.unisontech.org/schedules/$schedulesVersion");

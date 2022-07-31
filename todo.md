@@ -1,11 +1,10 @@
 # Bugs
-None, yay!
+- Current default schedule implementation opens two pages, instead of the one it should
+  - First page opened only shows "No Active Period"
 
 # Feature Parity
-- [ ] Onboarding
 - [x] What's New page
-- [ ] Default schedule
-- [ ] Loading from file
+- [x] Default schedule
 - [x] Current period
 - [x] Next period
 - Notifications
@@ -20,7 +19,13 @@ None, yay!
 - [ ] Notification settings (per schedule)
 - [ ] Import settings
 - [ ] Export settings
+- [x] Credits
+- [ ] Release notes (?)
+- [ ] Help center (?)
+- [ ] Schedule creator
 
 # Extended Features
+- [x] Offline loading
+- [x] Cached loading
 - [ ] Wear OS integration
 - [ ] Schedules environment (standard, edge)

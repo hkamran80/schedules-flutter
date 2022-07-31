@@ -3,14 +3,18 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
+import '../provider/schedules.dart';
 import 'about.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     Key? key,
+    required this.schedulesData,
   }) : super(key: key);
 
   static const routeName = "/settings";
+
+  final SchedulesProvider schedulesData;
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -18,9 +22,10 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _hour24Enabled = false;
-  // bool _notificationsEnabled = true;
-  bool _sentryEnabled = true;
+  bool _notificationsEnabled = true;
+  bool _sentryEnabled = false;
   DateTime _lastLoadTime = DateTime.now();
+  String _defaultSchedule = "";
 
   TextStyle headingStyle = const TextStyle(
     fontWeight: FontWeight.bold,
@@ -31,8 +36,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _loadHour24();
-    // _loadNotificationsEnabled();
+    _loadNotificationsEnabled();
     _loadLastLoadTime();
+    _loadDefaultSchedule();
     _loadSentry();
   }
 
@@ -55,25 +61,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // void _loadNotificationsEnabled() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   setState(
-  //     () {
-  //       _notificationsEnabled =
-  //           (prefs.getBool('_notificationsEnabled') ?? true);
-  //     },
-  //   );
-  // }
+  void _loadNotificationsEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        _notificationsEnabled =
+            (prefs.getBool('_notificationsEnabled') ?? true);
+      },
+    );
+  }
 
-  // void _toggleNotificationsEnabled(bool newState) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   setState(
-  //     () {
-  //       _notificationsEnabled = newState;
-  //       prefs.setBool('_notificationsEnabled', newState);
-  //     },
-  //   );
-  // }
+  void _toggleNotificationsEnabled(bool newState) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        _notificationsEnabled = newState;
+        prefs.setBool('_notificationsEnabled', newState);
+      },
+    );
+  }
 
   void _loadLastLoadTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -91,7 +97,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(
       () {
-        _sentryEnabled = (prefs.getBool('_sentryEnabled') ?? true);
+        _sentryEnabled = (prefs.getBool('_sentryEnabled') ?? false);
       },
     );
   }
@@ -103,6 +109,109 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _sentryEnabled = newState;
         prefs.setBool('_sentryEnabled', newState);
       },
+    );
+  }
+
+  void _loadDefaultSchedule() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        _defaultSchedule = (prefs.getString('_defaultSchedule') ?? "");
+      },
+    );
+  }
+
+  Future<void> _setDefaultSchedule(String newDefault) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        prefs.setString("_defaultSchedule", newDefault);
+      },
+    );
+  }
+
+  Future<void> _showDefaultScheduleSelection(BuildContext ctx) async {
+    await showModalBottomSheet(
+      elevation: 10,
+      backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+      context: ctx,
+      builder: (ctx) => Container(
+        width: MediaQuery.of(ctx).size.width,
+        height: MediaQuery.of(ctx).size.height * 0.75,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(22),
+          color: Theme.of(ctx).brightness == Brightness.dark
+              ? Colors.grey.shade900
+              : Colors.grey.shade100,
+        ),
+        alignment: Alignment.center,
+        child: Padding(
+          key: Key(_defaultSchedule),
+          padding: const EdgeInsets.all(25.0),
+          child: ListView(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  RadioListTile(
+                    title: const Text(
+                      "None",
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                    value: "",
+                    groupValue: _defaultSchedule,
+                    onChanged: (value) {
+                      setState(
+                        () {
+                          _defaultSchedule = value as String;
+                        },
+                      );
+
+                      _setDefaultSchedule(value as String);
+
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+              ...widget.schedulesData.schedules.entries
+                  .map(
+                    (schedule) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        RadioListTile(
+                          title: Text(
+                            schedule.value["name"] as String,
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                          value: schedule.key as String,
+                          groupValue: _defaultSchedule,
+                          onChanged: (value) {
+                            setState(
+                              () {
+                                _defaultSchedule = value as String;
+                              },
+                            );
+
+                            _setDefaultSchedule(value as String);
+
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                  .toList()
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -142,20 +251,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ],
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text(
-              //       "Notifications",
-              //       style: headingStyle,
-              //     ),
-              //     Switch(
-              //       value: _notificationsEnabled,
-              //       onChanged: (newState) =>
-              //           _toggleNotificationsEnabled(newState),
-              //     ),
-              //   ],
-              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Notifications",
+                    style: headingStyle,
+                  ),
+                  Switch(
+                    value: _notificationsEnabled,
+                    onChanged: (newState) =>
+                        _toggleNotificationsEnabled(newState),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: () {
+                  _showDefaultScheduleSelection(context);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Default Schedule",
+                      style: headingStyle,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _defaultSchedule != ""
+                              ? widget.schedulesData.schedules[_defaultSchedule]
+                                  ["shortName"]
+                              : "None",
+                          style: headingStyle.copyWith(
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        const Icon(
+                          FeatherIcons.chevronRight,
+                          size: 20,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 13),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

@@ -15,7 +15,7 @@ import 'utils/schedule.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
-  if (prefs.getBool("_sentryEnabled") ?? true) {
+  if (prefs.getBool("_sentryEnabled") ?? false) {
     await SentryFlutter.init(
       (options) {
         options.dsn = sentryDsn;
@@ -48,10 +48,11 @@ class SchedulesApp extends StatelessWidget {
     return MaterialApp(
       title: 'Schedules',
       theme: ThemeData(
-          primarySwatch: Colors.pink,
-          textTheme: GoogleFonts.nunitoSansTextTheme()
-          // typography
-          ),
+        primarySwatch: Colors.pink,
+        textTheme: GoogleFonts.nunitoSansTextTheme(),
+        useMaterial3: true,
+        // typography
+      ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black,
@@ -95,7 +96,7 @@ class SchedulesApp extends StatelessWidget {
           ScheduleScreenArguments args = ModalRoute.of(context)!
               .settings
               .arguments as ScheduleScreenArguments;
-              
+
           SchedulesProvider schedulesData =
               Provider.of<SchedulesProvider>(context);
 
@@ -108,7 +109,12 @@ class SchedulesApp extends StatelessWidget {
             ),
           );
         },
-        SettingsScreen.routeName: (context) => const SettingsScreen(),
+        SettingsScreen.routeName: (context) {
+          SchedulesProvider schedulesData =
+              Provider.of<SchedulesProvider>(context);
+
+          return SettingsScreen(schedulesData: schedulesData);
+        },
         AboutScreen.routeName: (context) => const AboutScreen(),
       },
     );

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:schedules/modals/timetable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +41,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   bool _hour24Enabled = false;
   late Timer _scheduleTimer;
   Object _reloadKey = Object();
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -127,22 +131,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           widget.schedulesData.schedules[widget.args.scheduleId]["shortName"],
         ),
         actions: [
-          IconButton(
-            onPressed: () => _showTimetable(
-              context,
-              widget.schedule.daySchedule(
-                DateFormat.E()
-                    .format(
-                      DateTime.now(),
-                    )
-                    .toUpperCase(),
+          if ((widget.schedule.schedule["schedule"] as Map<String, dynamic>)
+              .containsKey(
+            DateFormat.E()
+                .format(
+                  DateTime.now(),
+                )
+                .toUpperCase(),
+          ))
+            IconButton(
+              onPressed: () => _showTimetable(
+                context,
+                widget.schedule.daySchedule(
+                  DateFormat.E()
+                      .format(
+                        DateTime.now(),
+                      )
+                      .toUpperCase(),
+                ),
+              ),
+              icon: const Icon(
+                FeatherIcons.calendar,
+                size: 20,
               ),
             ),
-            icon: const Icon(
-              FeatherIcons.calendar,
-              size: 20,
-            ),
-          )
         ],
       ),
       body: SafeArea(

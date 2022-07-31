@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:feather_icons/feather_icons.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -23,10 +25,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _defaultSchedule = "";
+  bool _switched = false;
+
   @override
   void initState() {
     super.initState();
     _getSchedules();
+    _loadDefaultSchedule();
     _checkForNewVersion();
   }
 
@@ -55,6 +61,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _loadDefaultSchedule() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        _defaultSchedule = (prefs.getString('_defaultSchedule') ?? "");
+      },
+    );
+  }
+
   void _showWhatsNew(BuildContext ctx) {
     showModalBottomSheet(
       elevation: 10,
@@ -78,9 +93,35 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _switchToDefaultSchedule(BuildContext ctx) {
+    if (kDebugMode) {
+      print("Loading default schedule: \"$_defaultSchedule\"");
+    }
+
+    Navigator.pushNamed(
+      ctx,
+      "/schedule",
+      arguments: ScheduleScreenArguments(
+        _defaultSchedule,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final schedulesData = Provider.of<SchedulesProvider>(context);
+
+    SchedulerBinding.instance?.addPostFrameCallback(
+      (_) {
+        if (schedulesData.schedules.isNotEmpty &&
+            _defaultSchedule != "" &&
+            schedulesData.schedules.containsKey(_defaultSchedule) &&
+            !_switched) {
+          _switched = true;
+          _switchToDefaultSchedule(context);
+        }
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -109,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(25.0),
-          child: schedulesData.schedules.isEmpty
+          child: schedulesData.loading
               ? Center(
                   child: Lottie.asset(
                     "assets/loading.json",
@@ -117,48 +158,57 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 175,
                   ),
                 )
-              : ListView(
-                  children: schedulesData.schedules.entries
-                      .map(
-                        (schedule) => Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                alignment: Alignment.centerLeft,
-                                primary:
-                                    HexColor.fromHex(schedule.value["color"]),
-                                onPrimary:
-                                    HexColor.fromHex(schedule.value["color"])
+              : schedulesData.schedules.isNotEmpty
+                  ? ListView(
+                      children: schedulesData.schedules.entries
+                          .map(
+                            (schedule) => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    alignment: Alignment.centerLeft,
+                                    primary: HexColor.fromHex(
+                                        schedule.value["color"]),
+                                    onPrimary: HexColor.fromHex(
+                                                    schedule.value["color"])
                                                 .computeLuminance() >
                                             0.5
                                         ? Colors.black
                                         : Colors.white,
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  ScheduleScreen.routeName,
-                                  arguments: ScheduleScreenArguments(
-                                    schedule.key,
                                   ),
-                                );
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 15, 0, 15),
-                                child: Text(schedule.value["name"]),
-                              ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      ScheduleScreen.routeName,
+                                      arguments: ScheduleScreenArguments(
+                                        schedule.key,
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 15, 0, 15),
+                                    child: Text(schedule.value["name"]),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                              ],
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                          ],
+                          )
+                          .toList(),
+                    )
+                  : const Center(
+                      child: Text(
+                        "No schedules available",
+                        style: TextStyle(
+                          fontSize: 24,
                         ),
-                      )
-                      .toList(),
-                ),
+                      ),
+                    ),
         ),
       ),
     );
