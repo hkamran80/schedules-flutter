@@ -25,11 +25,11 @@ class _WhatsNewState extends State<WhatsNew> {
   Future<void> _readJson() async {
     final String response =
         await rootBundle.loadString('assets/whats-new.json');
-    List<dynamic> _whatsNewRaw = await json.decode(response);
+    List<dynamic> whatsNewRaw = await json.decode(response);
 
     setState(
       () {
-        _whatsNew = _whatsNewRaw.map((e) => e.toString()).toList();
+        _whatsNew = whatsNewRaw.map((e) => e.toString()).toList();
       },
     );
   }

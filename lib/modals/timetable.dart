@@ -29,9 +29,7 @@ class Timetable extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  period.times.start.convertTime(hour24Enabled) +
-                      " - " +
-                      period.times.end.convertTime(hour24Enabled),
+                  "${period.times.start.convertTime(hour24Enabled)} - ${period.times.end.convertTime(hour24Enabled)}",
                 ),
                 const SizedBox(height: 15),
               ],

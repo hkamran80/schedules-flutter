@@ -32,7 +32,7 @@ class ScheduleScreen extends StatefulWidget {
   final Schedule schedule;
 
   @override
-  _ScheduleScreenState createState() => _ScheduleScreenState();
+  State<ScheduleScreen> createState() => _ScheduleScreenState();
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {

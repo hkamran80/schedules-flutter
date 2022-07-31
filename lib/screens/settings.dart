@@ -17,7 +17,7 @@ class SettingsScreen extends StatefulWidget {
   final SchedulesProvider schedulesData;
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
@@ -322,13 +322,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: headingStyle,
                   ),
                   Text(
-                    DateFormat.yMMMMd().format(
-                          _lastLoadTime.toLocal(),
-                        ) +
-                        " " +
-                        DateFormat.Hm().format(
-                          _lastLoadTime.toLocal(),
-                        ),
+                    "${DateFormat.yMMMMd().format(
+                      _lastLoadTime.toLocal(),
+                    )} ${DateFormat.Hm().format(
+                      _lastLoadTime.toLocal(),
+                    )}",
                     style: headingStyle.copyWith(
                       fontWeight: FontWeight.normal,
                     ),

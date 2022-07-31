@@ -11,16 +11,16 @@ class AboutScreen extends StatefulWidget {
   static const routeName = "/about";
 
   @override
-  _AboutScreenState createState() => _AboutScreenState();
+  State<AboutScreen> createState() => _AboutScreenState();
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-  void _launchUrl(Uri _uri) async {
+  void _launchUrl(Uri uri) async {
     if (!await launchUrl(
-      _uri,
+      uri,
       mode: LaunchMode.externalApplication,
     )) {
-      throw 'Could not launch $_uri';
+      throw 'Could not launch $uri';
     }
   }
 
@@ -108,12 +108,12 @@ class _AboutScreenState extends State<AboutScreen> {
                             "Copyright © 2022 UNISON Technologies Inc. All rights reserved.",
                       );
                     },
-                    child: const Text("View licenses"),
                     style: ButtonStyle(
                       foregroundColor: MaterialStateProperty.all(Colors.pink),
                       overlayColor:
                           MaterialStateProperty.all(Colors.pink.shade200),
                     ),
+                    child: const Text("View licenses"),
                   ),
                   const SizedBox(height: 15),
                   const Text(

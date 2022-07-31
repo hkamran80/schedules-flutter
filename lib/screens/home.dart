@@ -54,9 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-    String _savedBuildNumber = (prefs.getString("buildNumber") ?? "");
-    if (_savedBuildNumber != "" &&
-        _savedBuildNumber != packageInfo.buildNumber) {
+    String savedBuildNumber = (prefs.getString("buildNumber") ?? "");
+    if (savedBuildNumber != "" &&
+        savedBuildNumber != packageInfo.buildNumber) {
+      // ignore: use_build_context_synchronously
       _showWhatsNew(context);
     }
   }
@@ -111,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final schedulesData = Provider.of<SchedulesProvider>(context);
 
-    SchedulerBinding.instance?.addPostFrameCallback(
+    SchedulerBinding.instance.addPostFrameCallback(
       (_) {
         if (schedulesData.schedules.isNotEmpty &&
             _defaultSchedule != "" &&
@@ -168,15 +169,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    alignment: Alignment.centerLeft,
-                                    primary: HexColor.fromHex(
-                                        schedule.value["color"]),
-                                    onPrimary: HexColor.fromHex(
+                                    foregroundColor: HexColor.fromHex(
                                                     schedule.value["color"])
                                                 .computeLuminance() >
                                             0.5
                                         ? Colors.black
                                         : Colors.white,
+                                    alignment: Alignment.centerLeft,
+                                    backgroundColor: HexColor.fromHex(
+                                        schedule.value["color"]),
                                   ),
                                   onPressed: () {
                                     Navigator.pushNamed(

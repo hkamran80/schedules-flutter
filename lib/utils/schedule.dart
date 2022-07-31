@@ -125,7 +125,7 @@ class Schedule {
 
   Period? get nextPeriod {
     if (currentPeriodExists) {
-      List<Period?> _daySchedule = daySchedule(
+      List<Period?> daySchedulePeriods = daySchedule(
         DateFormat.E()
             .format(
               DateTime.now(),
@@ -133,9 +133,9 @@ class Schedule {
             .toUpperCase(),
       );
 
-      return _daySchedule.length - 1 == _daySchedule.indexOf(currentPeriod)
+      return daySchedulePeriods.length - 1 == daySchedulePeriods.indexOf(currentPeriod)
           ? null
-          : _daySchedule.elementAt(_daySchedule.indexOf(currentPeriod) + 1);
+          : daySchedulePeriods.elementAt(daySchedulePeriods.indexOf(currentPeriod) + 1);
     }
 
     return null;
@@ -158,15 +158,7 @@ class Period {
 
   @override
   String toString() {
-    return "Period(\"" +
-        name +
-        "\", \"" +
-        originalName +
-        "\", " +
-        times.toString() +
-        ", " +
-        allowEditing.toString() +
-        ")";
+    return "Period(\"$name\", \"$originalName\", $times, $allowEditing)";
   }
 }
 
@@ -178,6 +170,6 @@ class PeriodTimes {
 
   @override
   String toString() {
-    return "PeriodTimes(\"" + start + "\", \"" + end + "\")";
+    return "PeriodTimes(\"$start\", \"$end\")";
   }
 }

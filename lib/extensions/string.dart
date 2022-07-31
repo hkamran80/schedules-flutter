@@ -14,11 +14,7 @@ extension StringDateTime on String {
 
     String hour = baseHour.startsWith("0") ? baseHour.substring(1) : baseHour;
 
-    return hour +
-        ":" +
-        time[1] +
-        " " +
-        (int.parse(time[0]) >= 12 ? "PM" : "AM");
+    return "$hour:${time[1]} ${int.parse(time[0]) >= 12 ? "PM" : "AM"}";
   }
 
   String convertTime(bool hour24) => hour24
