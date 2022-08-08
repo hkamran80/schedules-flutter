@@ -1,11 +1,12 @@
 # Release Notes
 
-## 0.1.1 (TBD)
+## 0.2.0 (Pending)
 
 - Add support for offline loading
 - Add credits
 - Switch timetable button to only show on valid days
 - [BUG] Add default schedule support
+- Switch to Material 3
 
 ## 0.1.0 (May 2, 2022)
 
