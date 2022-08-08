@@ -31,10 +31,9 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-android.buildTypes.release.ndk.debugSymbolLevel = { SYMBOL_TABLE | FULL }
-
 android {
     compileSdkVersion flutter.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -84,6 +83,10 @@ android {
             proguardFiles getDefaultProguardFile(
                     'proguard-android-optimize.txt'),
                     'proguard-rules.pro'
+
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
 }
