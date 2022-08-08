@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
 
 class WhatsNew extends StatefulWidget {
   const WhatsNew({
@@ -37,11 +36,9 @@ class _WhatsNewState extends State<WhatsNew> {
   @override
   Widget build(BuildContext context) {
     return _whatsNew.isEmpty
-        ? Center(
-            child: Lottie.asset(
-              "assets/loading.json",
-              width: 175,
-              height: 175,
+        ? const Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: "Loading",
             ),
           )
         : ListView(

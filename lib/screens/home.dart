@@ -2,13 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:schedules/modals/whats_new.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/color.dart';
+import '../modals/whats_new.dart';
 import '../provider/schedules.dart';
 import 'settings.dart';
 import 'schedule.dart';
@@ -162,60 +161,80 @@ class _HomeScreenState extends State<HomeScreen> {
               left: 15.0,
               right: 15.0,
             ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                schedulesData.schedules.entries
-                    .map(
-                      (schedule) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor:
-                                  HexColor.fromHex(schedule.value["color"])
-                                              .computeLuminance() >
-                                          0.5
-                                      ? Colors.black
-                                      : Colors.white,
-                              alignment: Alignment.centerLeft,
-                              backgroundColor: HexColor.fromHex(
-                                schedule.value["color"],
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                ScheduleScreen.routeName,
-                                arguments: ScheduleScreenArguments(
-                                  schedule.key,
-                                ),
-                              );
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                0,
-                                15,
-                                0,
-                                15,
-                              ),
-                              child: Text(
-                                schedule.value["name"],
-                                style: const TextStyle(
-                                  fontSize: 16.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                        ],
+            sliver: schedulesData.loading
+                ? const SliverToBoxAdapter(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        semanticsLabel: "Loading",
                       ),
-                    )
-                    .toList(),
-              ),
-            ),
+                    ),
+                  )
+                : schedulesData.schedules.isNotEmpty
+                    ? SliverList(
+                        delegate: SliverChildListDelegate(
+                          schedulesData.schedules.entries
+                              .map(
+                                (schedule) => Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: HexColor.fromHex(
+                                                        schedule.value["color"])
+                                                    .computeLuminance() >
+                                                0.5
+                                            ? Colors.black
+                                            : Colors.white,
+                                        alignment: Alignment.centerLeft,
+                                        backgroundColor: HexColor.fromHex(
+                                          schedule.value["color"],
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          ScheduleScreen.routeName,
+                                          arguments: ScheduleScreenArguments(
+                                            schedule.key,
+                                          ),
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          0,
+                                          15,
+                                          0,
+                                          15,
+                                        ),
+                                        child: Text(
+                                          schedule.value["name"],
+                                          style: const TextStyle(
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
+                                    ),
+                                  ],
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      )
+                    : const SliverToBoxAdapter(
+                        child: Center(
+                          child: Text(
+                            "No schedules available",
+                            style: TextStyle(
+                              fontSize: 24,
+                            ),
+                          ),
+                        ),
+                      ),
           ),
         ],
       ),

@@ -125,105 +125,117 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.schedulesData.schedules[widget.args.scheduleId]["shortName"],
-        ),
-        actions: [
-          if ((widget.schedule.schedule["schedule"] as Map<String, dynamic>)
-              .containsKey(
-            DateFormat.E()
-                .format(
-                  DateTime.now(),
-                )
-                .toUpperCase(),
-          ))
-            IconButton(
-              onPressed: () => _showTimetable(
-                context,
-                widget.schedule.daySchedule(
-                  DateFormat.E()
-                      .format(
-                        DateTime.now(),
-                      )
-                      .toUpperCase(),
-                ),
-              ),
-              icon: const Icon(
-                FeatherIcons.calendar,
-                size: 20,
-              ),
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
+    return Material(
+      color: backgroundColor,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar.medium(
+            backgroundColor: backgroundColor,
+            title: Text(
+              widget.schedulesData.schedules[widget.args.scheduleId]
+                  ["shortName"],
             ),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Column(
-            key: ValueKey(_reloadKey),
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                child: widget.schedule.currentPeriodExists
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          StackedCard(
-                            header: widget.schedule.currentPeriod!.name,
-                            content: widget.schedule.timeRemaining,
-                          ),
-                          const SizedBox(height: 10),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ),
-              Container(
-                child: widget.schedule.nextPeriodExists
-                    ? StackedCard(
-                        header: widget.schedule.nextPeriod!.name,
-                        content:
-                            widget.schedule.nextPeriod!.times.start.convertTime(
-                          _hour24Enabled,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
-              Container(
-                child: !widget.schedule.nextPeriodExists &&
-                        !widget.schedule.currentPeriodExists
-                    ? Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "No Active Period",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 36,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              "The current schedule does not have any periods listed for the current time",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+            actions: [
+              if ((widget.schedule.schedule["schedule"] as Map<String, dynamic>)
+                  .containsKey(
+                DateFormat.E()
+                    .format(
+                      DateTime.now(),
+                    )
+                    .toUpperCase(),
+              ))
+                IconButton(
+                  onPressed: () => _showTimetable(
+                    context,
+                    widget.schedule.daySchedule(
+                      DateFormat.E()
+                          .format(
+                            DateTime.now(),
+                          )
+                          .toUpperCase(),
+                    ),
+                  ),
+                  icon: const Icon(
+                    FeatherIcons.calendar,
+                    size: 20,
+                  ),
+                ),
             ],
           ),
-        ),
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              left: 5.0,
+              right: 5.0,
+            ),
+            sliver: SliverToBoxAdapter(
+              key: ValueKey(_reloadKey),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    child: widget.schedule.currentPeriodExists
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              StackedCard(
+                                header: widget.schedule.currentPeriod!.name,
+                                content: widget.schedule.timeRemaining,
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                  Container(
+                    child: widget.schedule.nextPeriodExists
+                        ? StackedCard(
+                            header: widget.schedule.nextPeriod!.name,
+                            content: widget.schedule.nextPeriod!.times.start
+                                .convertTime(
+                              _hour24Enabled,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                  Container(
+                    child: !widget.schedule.nextPeriodExists &&
+                            !widget.schedule.currentPeriodExists
+                        ? Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "No Active Period",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 36,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "The current schedule does not have any periods listed for the current time",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
