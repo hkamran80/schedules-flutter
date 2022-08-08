@@ -4,6 +4,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
+import '../credits.dart';
+import '../widgets/about_card.dart';
+import '../schedules_icons.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({Key? key}) : super(key: key);
@@ -45,61 +48,60 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('About'),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(50),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  const Image(
-                    image: AssetImage("assets/logo.png"),
-                    width: 125,
-                    height: 125,
-                  ),
-                  const SizedBox(height: 15),
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+
+    return Material(
+      color: backgroundColor,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar.medium(
+            backgroundColor: backgroundColor,
+            title: const Text(
+              "About",
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              left: 15.0,
+              right: 15.0,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  // App Information
                   const Text(
-                    applicationName,
+                    "App Information",
                     style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 28,
+                      color: Colors.pink,
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "Version $_version ($_buildNumber)",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16,
+                  AboutCard(
+                    icon: FeatherIcons.info,
+                    title: applicationName,
+                    subtitle: "Version $_version ($_buildNumber)",
+                  ),
+                  InkWell(
+                    child: const AboutCard(
+                      icon: FeatherIcons.github,
+                      title: "Repository",
+                      subtitle: "Opens in your browser",
                     ),
+                    onTap: () => _launchUrl(repositoryLink),
                   ),
-                  const SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        onPressed: () => _launchUrl(repositoryLink),
-                        icon: const Icon(
-                          FeatherIcons.github,
-                        ),
-                        tooltip: "Open repository",
-                      ),
-                      IconButton(
-                        onPressed: () => _launchUrl(newIssueLink),
-                        icon: const Icon(
-                          FeatherIcons.flag,
-                        ),
-                        tooltip: "Report a bug or create a feature request",
-                      ),
-                    ],
+                  InkWell(
+                    child: const AboutCard(
+                      icon: FeatherIcons.flag,
+                      title: "Feedback",
+                      subtitle: "Report a bug or request a feature",
+                    ),
+                    onTap: () => _launchUrl(newIssueLink),
                   ),
-                  OutlinedButton(
-                    onPressed: () {
+                  InkWell(
+                    child: const AboutCard(
+                      icon: FeatherIcons.list,
+                      title: "Licenses",
+                    ),
+                    onTap: () {
                       showLicensePage(
                         context: context,
                         applicationName: applicationName,
@@ -108,116 +110,74 @@ class _AboutScreenState extends State<AboutScreen> {
                             "Copyright © 2022 UNISON Technologies Inc. All rights reserved.",
                       );
                     },
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Colors.pink),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.pink.shade200),
-                    ),
-                    child: const Text("View licenses"),
                   ),
-                  const SizedBox(height: 15),
-                  const Text(
-                    "Copyright © 2022 UNISON Technologies Inc.",
-                    softWrap: true,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                    ),
+
+                  // Credits
+                  const SizedBox(
+                    height: 25,
                   ),
-                  const Text(
-                    "All rights reserved.",
-                    softWrap: true,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 15),
                   const Text(
                     "Credits",
                     style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18,
+                      color: Colors.pink,
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.65,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "H. Kamran",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                  ...credits
+                      .map(
+                        (credit) => credit.uri != null
+                            ? InkWell(
+                                child: AboutCard(
+                                  icon: credit.icon,
+                                  title: credit.name,
+                                  subtitle: credit.role,
+                                ),
+                                onTap: () => _launchUrl(credit.uri!),
+                              )
+                            : AboutCard(
+                                icon: credit.icon,
+                                title: credit.name,
+                                subtitle: credit.role,
                               ),
-                            ),
-                            Text(
-                              "Developer",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "J. Quam",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              "UI/UX Design, Logo Design",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "Andrew Zheng",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              "UI/UX Design",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      )
+                      .toList(),
+
+                  // Legal
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  const Text(
+                    "Legal",
+                    style: TextStyle(
+                      color: Colors.pink,
                     ),
+                  ),
+                  const AboutCard(
+                    icon: Schedules.copyright,
+                    title: "Copyright",
+                    subtitle:
+                        "Copyright © 2022 UNISON Technologies Inc. All rights reserved.",
+                  ),
+                  InkWell(
+                    child: const AboutCard(
+                      icon: FeatherIcons.shield,
+                      title: "Terms of Service",
+                      subtitle: "Opens in your browser",
+                    ),
+                    onTap: () => _launchUrl(tosLink),
+                  ),
+                  InkWell(
+                    child: const AboutCard(
+                      icon: FeatherIcons.shield,
+                      title: "Privacy Policy",
+                      subtitle: "Opens in your browser",
+                    ),
+                    onTap: () => _launchUrl(privacyPolicyLink),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
