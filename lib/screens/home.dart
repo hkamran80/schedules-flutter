@@ -55,8 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     String savedBuildNumber = (prefs.getString("buildNumber") ?? "");
-    if (savedBuildNumber != "" &&
-        savedBuildNumber != packageInfo.buildNumber) {
+    if (savedBuildNumber != "" && savedBuildNumber != packageInfo.buildNumber) {
       // ignore: use_build_context_synchronously
       _showWhatsNew(context);
     }
@@ -110,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final schedulesData = Provider.of<SchedulesProvider>(context);
 
     SchedulerBinding.instance.addPostFrameCallback(
@@ -124,93 +124,100 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Schedules'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              schedulesData.getSchedules();
-            },
-            icon: const Icon(
-              FeatherIcons.refreshCw,
-              size: 20,
+    return Material(
+      color: backgroundColor,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar.large(
+            backgroundColor: backgroundColor,
+            title: const Text(
+              "Schedules",
+              style: TextStyle(
+                fontSize: 40.0,
+              ),
+            ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  schedulesData.getSchedules();
+                },
+                icon: const Icon(
+                  FeatherIcons.refreshCw,
+                  size: 20,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SettingsScreen.routeName);
+                },
+                icon: const Icon(
+                  FeatherIcons.settings,
+                  size: 20,
+                ),
+              )
+            ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(
+              left: 15.0,
+              right: 15.0,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate(
+                schedulesData.schedules.entries
+                    .map(
+                      (schedule) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor:
+                                  HexColor.fromHex(schedule.value["color"])
+                                              .computeLuminance() >
+                                          0.5
+                                      ? Colors.black
+                                      : Colors.white,
+                              alignment: Alignment.centerLeft,
+                              backgroundColor: HexColor.fromHex(
+                                schedule.value["color"],
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                ScheduleScreen.routeName,
+                                arguments: ScheduleScreenArguments(
+                                  schedule.key,
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                0,
+                                15,
+                                0,
+                                15,
+                              ),
+                              child: Text(
+                                schedule.value["name"],
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, SettingsScreen.routeName);
-            },
-            icon: const Icon(
-              FeatherIcons.settings,
-              size: 20,
-            ),
-          )
         ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: schedulesData.loading
-              ? Center(
-                  child: Lottie.asset(
-                    "assets/loading.json",
-                    width: 175,
-                    height: 175,
-                  ),
-                )
-              : schedulesData.schedules.isNotEmpty
-                  ? ListView(
-                      children: schedulesData.schedules.entries
-                          .map(
-                            (schedule) => Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: HexColor.fromHex(
-                                                    schedule.value["color"])
-                                                .computeLuminance() >
-                                            0.5
-                                        ? Colors.black
-                                        : Colors.white,
-                                    alignment: Alignment.centerLeft,
-                                    backgroundColor: HexColor.fromHex(
-                                        schedule.value["color"]),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      ScheduleScreen.routeName,
-                                      arguments: ScheduleScreenArguments(
-                                        schedule.key,
-                                      ),
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 15, 0, 15),
-                                    child: Text(schedule.value["name"]),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                              ],
-                            ),
-                          )
-                          .toList(),
-                    )
-                  : const Center(
-                      child: Text(
-                        "No schedules available",
-                        style: TextStyle(
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
-        ),
       ),
     );
   }
