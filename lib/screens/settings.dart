@@ -258,11 +258,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     "Notifications",
                     style: headingStyle,
                   ),
-                  Switch(
-                    value: _notificationsEnabled,
-                    onChanged: (newState) =>
-                        _toggleNotificationsEnabled(newState),
-                  ),
+                  const Switch(
+                    value: false,
+                    onChanged: null,
+                  )
+                  // Switch(
+                  //   value: _notificationsEnabled,
+                  //   onChanged: (newState) =>
+                  //       _toggleNotificationsEnabled(newState),
+                  // ),
                 ],
               ),
               const SizedBox(height: 12),
