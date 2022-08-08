@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:schedules/modals/timetable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +10,7 @@ import '../provider/schedules.dart';
 import '../utils/schedule.dart';
 import '../widgets/stacked_card.dart';
 import '../extensions/string.dart';
+import 'schedule_settings.dart';
 
 class ScheduleScreenArguments {
   final String scheduleId;
@@ -41,9 +41,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   bool _hour24Enabled = false;
   late Timer _scheduleTimer;
   Object _reloadKey = Object();
-
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -162,6 +159,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     size: 20,
                   ),
                 ),
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    ScheduleSettingsScreen.routeName,
+                    arguments: ScheduleScreenArguments(
+                      widget.args.scheduleId,
+                    ),
+                  );
+                },
+                icon: const Icon(FeatherIcons.settings),
+              ),
             ],
           ),
           SliverPadding(

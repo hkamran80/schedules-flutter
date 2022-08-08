@@ -1,7 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/string.dart';
+import '../notification_constants.dart';
+import 'notification_service.dart';
 
 class Schedule {
   String scheduleId;
@@ -117,6 +121,7 @@ class Schedule {
       String minutes = remaining.inMinutes.remainder(60).twoDigits();
       String seconds = remaining.inSeconds.remainder(60).twoDigits();
 
+      notify(remaining);
       return "$hours:$minutes:$seconds";
     }
 
@@ -133,9 +138,11 @@ class Schedule {
             .toUpperCase(),
       );
 
-      return daySchedulePeriods.length - 1 == daySchedulePeriods.indexOf(currentPeriod)
+      return daySchedulePeriods.length - 1 ==
+              daySchedulePeriods.indexOf(currentPeriod)
           ? null
-          : daySchedulePeriods.elementAt(daySchedulePeriods.indexOf(currentPeriod) + 1);
+          : daySchedulePeriods
+              .elementAt(daySchedulePeriods.indexOf(currentPeriod) + 1);
     }
 
     return null;
@@ -146,6 +153,43 @@ class Schedule {
 
   bool get nextPeriodExists =>
       nextPeriod.runtimeType.toString().toLowerCase() != "null";
+
+  Future<void> notify(Duration remaining) async {
+    List<int> remainingArray = [
+      remaining.inHours,
+      remaining.inMinutes.remainder(60).toInt(),
+      remaining.inSeconds.remainder(60).toInt()
+    ];
+
+    try {
+      Function equals = const ListEquality().equals;
+
+      NotificationInterval interval = notificationIntervals.firstWhere(
+        (notificationInterval) =>
+            equals(notificationInterval.array, remainingArray),
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool("$scheduleId.${interval.id}") ?? true) {
+        await NotificationService().createNotification(
+          DateTime.now().millisecond,
+          schedule["shortName"],
+          "${interval.name} remaining",
+          "com.hkamran.schedules.${interval.id}",
+          interval.name,
+          interval.name,
+          null,
+          null,
+          null,
+        );
+      } else {
+        if (kDebugMode) {
+          print("User disabled interval notification");
+        }
+      }
+      // ignore: empty_catches
+    } catch (error) {}
+  }
 }
 
 class Period {
