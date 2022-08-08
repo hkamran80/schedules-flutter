@@ -1,8 +1,10 @@
 # Bugs
+
 - Current default schedule implementation opens two pages, instead of the one it should
   - First page opened only shows "No Active Period"
 
 # Feature Parity
+
 - [x] What's New page
 - [x] Default schedule
 - [x] Current period
@@ -25,6 +27,7 @@
 - [ ] Schedule creator
 
 # Extended Features
+
 - [x] Offline loading
 - [x] Cached loading
 - [ ] Wear OS integration
