@@ -54,6 +54,7 @@ class SchedulesApp extends StatelessWidget {
         // typography
       ),
       darkTheme: ThemeData(
+        useMaterial3: true,
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black,
         appBarTheme: AppBarTheme(
