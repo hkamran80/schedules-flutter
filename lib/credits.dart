@@ -26,6 +26,7 @@ final List<Credit> credits = [
     name: "J. Quam",
     role: "UI/UX Design, Logo Design",
     icon: FeatherIcons.layers,
+    uri: Uri.parse("https://unsplash.com/@jquam"),
   ),
   Credit(
     name: "Andrew Zheng",
