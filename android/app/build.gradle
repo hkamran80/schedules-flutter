@@ -31,6 +31,8 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+android.buildTypes.release.ndk.debugSymbolLevel = { SYMBOL_TABLE | FULL }
+
 android {
     compileSdkVersion flutter.compileSdkVersion
 
