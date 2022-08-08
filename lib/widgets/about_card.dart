@@ -44,7 +44,9 @@ class AboutCard extends StatelessWidget {
                       overflow: TextOverflow.visible,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).secondaryHeaderColor,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.black54
+                            : Colors.white54,
                       ),
                     ),
                 ],
