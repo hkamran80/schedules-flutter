@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'screens/schedule_settings.dart';
+import 'screens/notification_settings.dart';
 import 'secrets.dart';
 import 'provider/schedules.dart';
 import 'screens/about.dart';
@@ -110,7 +110,7 @@ class SchedulesApp extends StatelessWidget {
             ),
           );
         },
-        ScheduleSettingsScreen.routeName: (context) {
+        ScheduleNotificationsSettingsScreen.routeName: (context) {
           ScheduleScreenArguments args = ModalRoute.of(context)!
               .settings
               .arguments as ScheduleScreenArguments;
@@ -118,9 +118,13 @@ class SchedulesApp extends StatelessWidget {
           SchedulesProvider schedulesData =
               Provider.of<SchedulesProvider>(context);
 
-          return ScheduleSettingsScreen(
+          return ScheduleNotificationsSettingsScreen(
             scheduleId: args.scheduleId,
             schedulesData: schedulesData,
+            schedule: Schedule(
+              args.scheduleId,
+              schedulesData.schedules[args.scheduleId],
+            ),
           );
         },
         SettingsScreen.routeName: (context) {

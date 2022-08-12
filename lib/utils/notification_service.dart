@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -22,7 +23,7 @@ class NotificationService {
       requestSoundPermission: false,
       requestBadgePermission: false,
       requestAlertPermission: false,
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+      onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
     );
 
     final InitializationSettings initializationSettings =
@@ -33,30 +34,27 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: selectNotification,
+      onSelectNotification: _selectNotification,
     );
   }
 
-  void selectNotification(String? payload) async {}
+  void _selectNotification(String? payload) async {}
 
-  void onDidReceiveLocalNotification(
+  void _onDidReceiveLocalNotification(
     int id,
     String? title,
     String? body,
     String? payload,
   ) {}
 
-  Future<void> createNotification(
-    int id,
-    String title,
-    String body,
+  NotificationDetails _notificationDetails(
     String channelId,
     String channelName,
     String channelDescription,
     Importance? importance,
     Priority? priority,
     String? subtitle,
-  ) async {
+  ) {
     AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       channelId,
@@ -72,12 +70,69 @@ class NotificationService {
       subtitle: subtitle,
     );
 
-    NotificationDetails notificationDetails = NotificationDetails(
+    return NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iosPlatformChannelSpecifics,
     );
+  }
 
+  Future<void> createNotification(
+    int id,
+    String title,
+    String body,
+    String channelId,
+    String channelName,
+    String channelDescription,
+    Importance? importance,
+    Priority? priority,
+    String? subtitle,
+  ) async {
     await flutterLocalNotificationsPlugin.show(
-        id, title, body, notificationDetails);
+      id,
+      title,
+      body,
+      _notificationDetails(
+        channelId,
+        channelName,
+        channelDescription,
+        importance,
+        priority,
+        subtitle,
+      ),
+    );
+  }
+
+  Future<void> scheduleNotification(
+    int id,
+    String title,
+    String body,
+    DateTime scheduledDate,
+    String channelId,
+    String channelName,
+    String channelDescription,
+    Importance? importance,
+    Priority? priority,
+    String? subtitle,
+  ) async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id,
+      title,
+      body,
+      TZDateTime.from(
+        scheduledDate.toUtc(),
+        UTC,
+      ),
+      _notificationDetails(
+        channelId,
+        channelName,
+        channelDescription,
+        importance,
+        priority,
+        subtitle,
+      ),
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      androidAllowWhileIdle: true,
+    );
   }
 }

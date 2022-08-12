@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.2.1 (TBA)
+
+- Add notifications (intervals, days, periods)
+- Improve load time, fix default schedule bug
+
 ## 0.2.0 (Pending)
 
 - Add support for offline loading

@@ -10,15 +10,18 @@
 - [x] Current period
 - [x] Next period
 - Notifications
-  - [ ] One hour
-  - [ ] Thirty minutes
-  - [ ] Fifteen minutes
-  - [ ] Ten minutes
-  - [ ] Five minutes
-  - [ ] One minute
-  - [ ] Thirty seconds
+  - Intervals
+    - [x] One hour
+    - [x] Thirty minutes
+    - [x] Fifteen minutes
+    - [x] Ten minutes
+    - [x] Five minutes
+    - [x] One minute
+    - [x] Thirty seconds
+  - [x] Days
+  - [ ] Periods
 - [ ] Period name editing
-- [ ] Notification settings (per schedule)
+- [x] Notification settings (per schedule)
 - [ ] Import settings
 - [ ] Export settings
 - [x] Credits

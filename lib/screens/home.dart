@@ -69,6 +69,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _deleteDefaultSchedule() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        prefs.setString('_defaultSchedule', "");
+        _defaultSchedule = "";
+      },
+    );
+  }
+
   void _showWhatsNew(BuildContext ctx) {
     showModalBottomSheet(
       elevation: 10,
@@ -119,6 +129,11 @@ class _HomeScreenState extends State<HomeScreen> {
             !_switched) {
           _switched = true;
           _switchToDefaultSchedule(context);
+        } else if (schedulesData.schedules.isNotEmpty &&
+            _defaultSchedule != "" &&
+            !schedulesData.schedules.containsKey(_defaultSchedule) &&
+            !_switched) {
+          _deleteDefaultSchedule();
         }
       },
     );

@@ -12,6 +12,8 @@ class Schedule {
   Map<dynamic, dynamic> schedule;
 
   Set<Period> periods = {};
+  String _periodName = "";
+  bool _notificationsScheduled = false;
 
   Schedule(this.scheduleId, this.schedule);
 
@@ -83,6 +85,11 @@ class Schedule {
                     currentTime &&
                 currentTime <=
                     int.parse(schedulePeriod.times.end.replaceAll("-", ""))) {
+              if (_periodName != schedulePeriod.name) {
+                _notificationsScheduled = false;
+                _periodName = schedulePeriod.originalName;
+              }
+
               return true;
             } else {
               return false;
@@ -94,10 +101,12 @@ class Schedule {
           print(error);
         }
 
+        _periodName = "";
         return null;
       }
     }
 
+    _periodName = "";
     return null;
   }
 
@@ -121,7 +130,10 @@ class Schedule {
       String minutes = remaining.inMinutes.remainder(60).twoDigits();
       String seconds = remaining.inSeconds.remainder(60).twoDigits();
 
-      notify(remaining);
+      if (!_notificationsScheduled) {
+        _notify(remaining);
+        _scheduleNotifications(remaining);
+      }
       return "$hours:$minutes:$seconds";
     }
 
@@ -154,41 +166,109 @@ class Schedule {
   bool get nextPeriodExists =>
       nextPeriod.runtimeType.toString().toLowerCase() != "null";
 
-  Future<void> notify(Duration remaining) async {
-    List<int> remainingArray = [
-      remaining.inHours,
-      remaining.inMinutes.remainder(60).toInt(),
-      remaining.inSeconds.remainder(60).toInt()
-    ];
+  Future<void> _notify(Duration remaining) async {
+    if (currentPeriodExists) {
+      List<int> remainingArray = [
+        remaining.inHours,
+        remaining.inMinutes.remainder(60).toInt(),
+        remaining.inSeconds.remainder(60).toInt()
+      ];
 
-    try {
-      Function equals = const ListEquality().equals;
+      try {
+        Function equals = const ListEquality().equals;
 
-      NotificationInterval interval = notificationIntervals.firstWhere(
-        (notificationInterval) =>
-            equals(notificationInterval.array, remainingArray),
-      );
-
-      final prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool("$scheduleId.${interval.id}") ?? true) {
-        await NotificationService().createNotification(
-          DateTime.now().millisecond,
-          schedule["shortName"],
-          "${interval.name} remaining",
-          "com.hkamran.schedules.${interval.id}",
-          interval.name,
-          interval.name,
-          null,
-          null,
-          null,
+        NotificationInterval interval = notificationIntervals.firstWhere(
+          (notificationInterval) =>
+              equals(notificationInterval.array, remainingArray),
         );
-      } else {
-        if (kDebugMode) {
-          print("User disabled interval notification");
+
+        final prefs = await SharedPreferences.getInstance();
+        if ((prefs.getBool("$scheduleId.${interval.id}") ?? true) &&
+            (prefs.getBool(
+                    "$scheduleId.${DateFormat.EEEE().format(DateTime.now()).toLowerCase()}") ??
+                true) &&
+            (prefs.getBool("$scheduleId.${currentPeriod!.id}") ?? true)) {
+          await NotificationService().createNotification(
+            _generateNotificationId(DateTime.now()),
+            schedule["shortName"] + ": " + currentPeriod!.name,
+            "${interval.name} remaining",
+            "com.hkamran.schedules.${interval.id}",
+            interval.name,
+            interval.name,
+            null,
+            null,
+            null,
+          );
+        } else {
+          if (kDebugMode) {
+            print("User disabled interval notification");
+          }
         }
+        // ignore: empty_catches
+      } catch (error) {}
+    }
+  }
+
+  Future<void> _scheduleNotifications(Duration remaining) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (currentPeriodExists &&
+        (prefs.getBool(
+                "$scheduleId.${DateFormat.EEEE().format(DateTime.now()).toLowerCase()}") ??
+            true)) {
+      if (!_notificationsScheduled &&
+          _periodName == currentPeriod!.name &&
+          (prefs.getBool("$scheduleId.${currentPeriod!.id}") ?? true)) {
+        List<int> remainingArray = [
+          remaining.inHours,
+          remaining.inMinutes.remainder(60).toInt(),
+          remaining.inSeconds.remainder(60).toInt()
+        ];
+
+        List<NotificationInterval> intervals = notificationIntervals
+            .where(
+              (interval) =>
+                  (interval.array[0] <= remainingArray[0]) &&
+                  (interval.array[1] <= remainingArray[1]),
+            )
+            .where(
+              (interval) =>
+                  (prefs.getBool("$scheduleId.${interval.id}") ?? true),
+            )
+            .toList();
+
+        for (var interval in intervals) {
+          DateTime scheduledTime = DateFormat("y-M-d H:m:s")
+              .parse(
+                "${DateTime.now().toString().split(" ")[0]} ${currentPeriod!.times.end.replaceAll("-", ":")}",
+              )
+              .subtract(interval.duration);
+
+          await NotificationService().scheduleNotification(
+            _generateNotificationId(scheduledTime),
+            schedule["shortName"] + ": " + currentPeriod!.name,
+            "${interval.name} remaining",
+            scheduledTime,
+            "com.hkamran.schedules.${interval.id}",
+            interval.name,
+            interval.name,
+            null,
+            null,
+            null,
+          );
+        }
+
+        _notificationsScheduled = true;
       }
-      // ignore: empty_catches
-    } catch (error) {}
+    }
+  }
+
+  int _generateNotificationId(DateTime scheduledTime) {
+    String year = scheduledTime.year.toString();
+    return int.parse(scheduledTime.month.twoDigits() +
+        scheduledTime.day.twoDigits() +
+        year.substring(year.length - 2) +
+        scheduledTime.hour.twoDigits() +
+        scheduledTime.minute.twoDigits());
   }
 }
 
@@ -204,6 +284,8 @@ class Period {
   String toString() {
     return "Period(\"$name\", \"$originalName\", $times, $allowEditing)";
   }
+
+  String get id => originalName.slugify();
 }
 
 class PeriodTimes {

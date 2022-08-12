@@ -1,7 +1,5 @@
 extension StringNumber on int {
-  String twoDigits() {
-    return toString().padLeft(2, "0");
-  }
+  String twoDigits() => toString().padLeft(2, "0");
 }
 
 extension StringDateTime on String {
@@ -20,4 +18,10 @@ extension StringDateTime on String {
   String convertTime(bool hour24) => hour24
       ? split("-").sublist(0, 2).join(":")
       : replaceAll("-", ":").convertTo12Hour();
+}
+
+extension StringRegExp on String {
+  String slugify() => replaceAll(RegExp('[^A-Za-z0-9]'), "")
+      .replaceAll(" ", "-")
+      .toLowerCase();
 }

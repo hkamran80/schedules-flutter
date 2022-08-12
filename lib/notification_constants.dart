@@ -1,3 +1,5 @@
+import 'package:schedules/extensions/string.dart';
+
 class NotificationInterval {
   List<int> array;
   String name;
@@ -7,7 +9,22 @@ class NotificationInterval {
     required this.name,
   });
 
-  String get id => name.toLowerCase().replaceAll(" ", "-");
+  String get id => name.slugify();
+  Duration get duration => Duration(
+        hours: array[0],
+        minutes: array[1],
+        seconds: array[2],
+      );
+}
+
+class NotificationDay {
+  String day;
+
+  NotificationDay({
+    required this.day,
+  });
+
+  String get id => day.slugify();
 }
 
 final List<NotificationInterval> notificationIntervals = [
@@ -18,4 +35,14 @@ final List<NotificationInterval> notificationIntervals = [
   NotificationInterval(array: [0, 5, 0], name: "Five minutes"),
   NotificationInterval(array: [0, 1, 0], name: "One minute"),
   NotificationInterval(array: [0, 0, 30], name: "Thirty seconds"),
+];
+
+final List<NotificationDay> notificationDays = [
+  NotificationDay(day: "Sunday"),
+  NotificationDay(day: "Monday"),
+  NotificationDay(day: "Tuesday"),
+  NotificationDay(day: "Wednesday"),
+  NotificationDay(day: "Thursday"),
+  NotificationDay(day: "Friday"),
+  NotificationDay(day: "Saturday"),
 ];

@@ -1,16 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:feather_icons/feather_icons.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:schedules/modals/timetable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../extensions/color.dart';
 import '../provider/schedules.dart';
 import '../utils/schedule.dart';
 import '../widgets/stacked_card.dart';
 import '../extensions/string.dart';
-import 'schedule_settings.dart';
+import 'notification_settings.dart';
 
 class ScheduleScreenArguments {
   final String scheduleId;
@@ -159,17 +162,50 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     size: 20,
                   ),
                 ),
-              IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    ScheduleSettingsScreen.routeName,
-                    arguments: ScheduleScreenArguments(
-                      widget.args.scheduleId,
+              PopupMenuButton(
+                itemBuilder: (BuildContext context) => const [
+                  PopupMenuItem(
+                    value: "notifications",
+                    child: Text(
+                      "Notifications",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
                     ),
-                  );
+                  ),
+                  PopupMenuItem(
+                    value: "settings",
+                    child: Text(
+                      "Settings",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+                onSelected: (value) {
+                  if (value == "notifications") {
+                    Navigator.pushNamed(
+                      context,
+                      ScheduleNotificationsSettingsScreen.routeName,
+                      arguments: ScheduleScreenArguments(
+                        widget.args.scheduleId,
+                      ),
+                    );
+                  } else if (value == "settings") {
+                    if (kDebugMode) {
+                      print("Settings navigation is not yet implemented.");
+                    }
+                  }
                 },
-                icon: const Icon(FeatherIcons.settings),
+                color: Theme.of(context).brightness == Brightness.light
+                    ? HexColor.fromHex("#F7F7F7")
+                    : HexColor.fromHex("#151515"),
+                icon: const Icon(
+                  FeatherIcons.settings,
+                  size: 20,
+                ),
+                position: PopupMenuPosition.under,
               ),
             ],
           ),
@@ -219,20 +255,53 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
+                              children: [
+                                const Text(
                                   "No Active Period",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w900,
                                     fontSize: 36,
                                   ),
                                 ),
-                                SizedBox(height: 10),
-                                Text(
+                                const SizedBox(height: 10),
+                                const Text(
                                   "The current schedule does not have any periods listed for the current time",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 18,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  "ISO-8601: ${DateTime.now().toIso8601String()}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  "Current Period (exists): ${widget.schedule.currentPeriodExists}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                Text(
+                                  "Next Period (exists): ${widget.schedule.nextPeriodExists}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  jsonEncode(widget.schedulesData
+                                          .schedules[widget.args.scheduleId])
+                                      .toString(),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],

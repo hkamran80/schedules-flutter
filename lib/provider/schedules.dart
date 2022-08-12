@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -16,12 +17,60 @@ class SchedulesProvider with ChangeNotifier {
   getSchedules() async {
     loading = true;
     isRequestError = false;
+    bool loadedFromNetwork = false;
 
     if (kDebugMode) {
       print("Loading schedules...");
     }
 
-    if (await (await _localFile).exists()) {
+    bool network = await _hasNetwork();
+
+    if (network) {
+      if (kDebugMode) {
+        print("Loading from UT...");
+      }
+
+      try {
+        final response = await http.get(schedulesLink);
+
+        String hash = sha256.convert(utf8.encode(response.body)).toString();
+        if ((await _getScheduleHash()) != hash) {
+          schedules = json.decode(
+            response.body,
+          ) as Map;
+
+          await _saveSchedules(
+            response.body,
+          );
+          _saveScheduleLoadTime(
+            DateTime.now(),
+          );
+          _saveScheduleHash(hash);
+
+          loading = false;
+          isRequestError = false;
+          loadedFromNetwork = true;
+
+          if (kDebugMode) {
+            print("Loaded from UT!");
+          }
+
+          notifyListeners();
+        }
+      } catch (error) {
+        // loading = false;
+        // isRequestError = true;
+        loadedFromNetwork = false;
+
+        if (kDebugMode) {
+          print("Request error");
+        }
+
+        notifyListeners();
+      }
+    }
+
+    if (!loadedFromNetwork && await (await _localFile).exists()) {
       String schedulesFileContents = await _loadSchedulesFromFile();
       if (schedulesFileContents == "[error]") {
         loading = false;
@@ -42,7 +91,7 @@ class SchedulesProvider with ChangeNotifier {
           isRequestError = false;
 
           if (kDebugMode) {
-            print("Loaded from file");
+            print("Loaded from file!");
           }
 
           notifyListeners();
@@ -66,45 +115,6 @@ class SchedulesProvider with ChangeNotifier {
       }
 
       notifyListeners();
-    }
-
-    bool network = await _hasNetwork();
-    if (network) {
-      if (kDebugMode) {
-        print("Loading from UT");
-      }
-
-      try {
-        final response = await http.get(schedulesLink);
-
-        schedules = json.decode(
-          response.body,
-        ) as Map;
-        await _saveSchedules(
-          response.body,
-        );
-        _saveScheduleLoadTime(
-          DateTime.now(),
-        );
-
-        loading = false;
-        isRequestError = false;
-
-        if (kDebugMode) {
-          print("Loaded from UT!");
-        }
-
-        notifyListeners();
-      } catch (error) {
-        loading = false;
-        isRequestError = true;
-
-        if (kDebugMode) {
-          print("Request error");
-        }
-
-        notifyListeners();
-      }
     }
   }
 
@@ -141,6 +151,16 @@ class SchedulesProvider with ChangeNotifier {
       time.toIso8601String(),
     );
     loading = false;
+  }
+
+  void _saveScheduleHash(String digest) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("schedulesHash", digest);
+  }
+
+  Future<String> _getScheduleHash() async {
+    final prefs = await SharedPreferences.getInstance();
+    return (prefs.getString("schedulesHash") ?? "");
   }
 
   Future<bool> _hasNetwork() async {
