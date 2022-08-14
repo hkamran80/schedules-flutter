@@ -27,7 +27,7 @@
 - [x] Credits
 - [ ] Release notes (?)
 - [ ] Help center (?)
-- [ ] Schedule creator
+- [ ] Schedule creator (?)
 
 # Extended Features
 
