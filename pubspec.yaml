@@ -35,7 +35,6 @@ dependencies:
     http: ^0.13.4
     sentry_flutter: ^6.9.0
     flutter_local_notifications: ^9.7.0
-    rxdart: ^0.27.5
     collection: ^1.16.0
     timezone: ^0.8.0
     crypto: ^3.0.2

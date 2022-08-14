@@ -21,6 +21,11 @@ Future<void> main() async {
   await NotificationService().init();
 
   final prefs = await SharedPreferences.getInstance();
+  final appRunner = ChangeNotifierProvider(
+    create: (context) => SchedulesProvider(),
+    child: const SchedulesApp(),
+  );
+
   if (prefs.getBool("_sentryEnabled") ?? false) {
     await SentryFlutter.init(
       (options) {
@@ -29,20 +34,10 @@ Future<void> main() async {
         options.tracesSampleRate = 1.0;
         options.enableAutoSessionTracking = true;
       },
-      appRunner: () => runApp(
-        ChangeNotifierProvider(
-          create: (context) => SchedulesProvider(),
-          child: const SchedulesApp(),
-        ),
-      ),
+      appRunner: () => runApp(appRunner),
     );
   } else {
-    runApp(
-      ChangeNotifierProvider(
-        create: (context) => SchedulesProvider(),
-        child: const SchedulesApp(),
-      ),
-    );
+    runApp(appRunner);
   }
 }
 
