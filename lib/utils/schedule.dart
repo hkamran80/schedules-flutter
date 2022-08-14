@@ -17,30 +17,41 @@ class Schedule {
 
   Schedule(this.scheduleId, this.schedule);
 
-  void generateDayPeriods(String day) {
+  void generateDayPeriods(String day) async {
+    final prefs = await SharedPreferences.getInstance();
     if ((schedule["schedule"] as Map<String, dynamic>).containsKey(day)) {
       final Map<dynamic, dynamic> daySchedule = schedule["schedule"][day];
 
-      for (final periodName in daySchedule.keys) {
-        final period = daySchedule[periodName];
+      for (final originalPeriodName in daySchedule.keys) {
+        final period = daySchedule[originalPeriodName];
 
         PeriodTimes times = period is List
             ? PeriodTimes(period[0], period[1])
             : PeriodTimes(period["times"][0], period["times"][1]);
 
         bool allowEditing = true;
-        if (period is List && (periodName as String).contains("Passing (")) {
+        if (period is List && (originalPeriodName as String).contains("Passing (")) {
           allowEditing = false;
         } else if (period is! List) {
           allowEditing = period["allowEditing"];
         }
 
         if (periods.every(
-            (schedulePeriod) => schedulePeriod.originalName != periodName)) {
+            (schedulePeriod) => schedulePeriod.originalName != originalPeriodName)) {
+          String periodId = (originalPeriodName as String).slugify();
+
+          String? customName = prefs.getString("$scheduleId.$periodId.name");
+          String newPeriodName;
+          if (customName != null) {
+            newPeriodName = "$customName ($originalPeriodName)";
+          } else {
+            newPeriodName = originalPeriodName;
+          }
+
           periods.add(
             Period(
-              periodName,
-              periodName,
+              newPeriodName,
+              originalPeriodName,
               times,
               allowEditing,
             ),

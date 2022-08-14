@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:feather_icons/feather_icons.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:schedules/modals/timetable.dart';
@@ -14,6 +13,7 @@ import '../utils/schedule.dart';
 import '../widgets/stacked_card.dart';
 import '../extensions/string.dart';
 import 'notification_settings.dart';
+import 'period_name_settings.dart';
 
 class ScheduleScreenArguments {
   final String scheduleId;
@@ -174,9 +174,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     ),
                   ),
                   PopupMenuItem(
-                    value: "settings",
+                    value: "periodNames",
                     child: Text(
-                      "Settings",
+                      "Period Names",
                       style: TextStyle(
                         fontSize: 16,
                       ),
@@ -192,10 +192,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         widget.args.scheduleId,
                       ),
                     );
-                  } else if (value == "settings") {
-                    if (kDebugMode) {
-                      print("Settings navigation is not yet implemented.");
-                    }
+                  } else if (value == "periodNames") {
+                    Navigator.pushNamed(
+                      context,
+                      SchedulePeriodNamesSettingsScreen.routeName,
+                      arguments: ScheduleScreenArguments(
+                        widget.args.scheduleId,
+                      ),
+                    );
                   }
                 },
                 color: Theme.of(context).brightness == Brightness.light
