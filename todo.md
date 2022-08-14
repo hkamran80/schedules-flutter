@@ -19,8 +19,8 @@
     - [x] One minute
     - [x] Thirty seconds
   - [x] Days
-  - [ ] Periods
-- [ ] Period name editing
+  - [x] Periods
+- [x] Period name editing
 - [x] Notification settings (per schedule)
 - [ ] Import settings
 - [ ] Export settings
