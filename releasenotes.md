@@ -1,11 +1,12 @@
 # Release Notes
 
-## 0.2.1 (TBA)
+## 0.2.1 (Pending)
 
 - Add notifications (intervals, days, periods)
 - Improve load time, fix default schedule bug
+- Add custom period names support
 
-## 0.2.0 (Pending)
+## 0.2.0 (August 13, 2022)
 
 - Add support for offline loading
 - Add credits
