@@ -259,53 +259,20 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
+                              children: const [
+                                Text(
                                   "No Active Period",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w900,
                                     fontSize: 36,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                                const Text(
+                                SizedBox(height: 10),
+                                Text(
                                   "The current schedule does not have any periods listed for the current time",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 18,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  "ISO-8601: ${DateTime.now().toIso8601String()}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  "Current Period (exists): ${widget.schedule.currentPeriodExists}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  "Next Period (exists): ${widget.schedule.nextPeriodExists}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  jsonEncode(widget.schedulesData
-                                          .schedules[widget.args.scheduleId])
-                                      .toString(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
                                   ),
                                 ),
                               ],
