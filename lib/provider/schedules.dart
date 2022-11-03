@@ -31,7 +31,9 @@ class SchedulesProvider with ChangeNotifier {
       }
 
       try {
-        final response = await http.get(schedulesLink);
+        final response = await http.get(schedulesLink).timeout(
+              const Duration(seconds: 10),
+            );
 
         String hash = sha256.convert(utf8.encode(response.body)).toString();
         if ((await _getScheduleHash()) != hash) {
