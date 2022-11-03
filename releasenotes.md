@@ -1,10 +1,16 @@
 # Release Notes
 
-## 0.2.1 (Pending)
+## 0.2.2 (TBD)
+
+- Fix cursor colour
+- Fix notification toggle in settings
+
+## 0.2.1 (August 20, 2022)
 
 - Add notifications (intervals, days, periods)
 - Improve load time, fix default schedule bug
 - Add custom period names support
+- Update J. Quam's credit URL
 
 ## 0.2.0 (August 13, 2022)
 

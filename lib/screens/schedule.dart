@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
@@ -133,9 +132,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         slivers: [
           SliverAppBar.medium(
             backgroundColor: backgroundColor,
-            title: Text(
-              widget.schedulesData.schedules[widget.args.scheduleId]
-                  ["shortName"],
+            title: Column(
+              children: [
+                Text(
+                  widget.schedulesData.schedules[widget.args.scheduleId]
+                      ["shortName"],
+                ),
+              ],
             ),
             actions: [
               if ((widget.schedule.schedule["schedule"] as Map<String, dynamic>)

@@ -25,7 +25,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _hour24Enabled = false;
-  final bool _notificationsEnabled = false;
+  bool _notificationsEnabled = true;
   bool _sentryEnabled = false;
   DateTime _lastLoadTime = DateTime.now();
   String _defaultSchedule = "";
@@ -41,7 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _loadHour24();
-    // _loadNotificationsEnabled();
+    _loadNotificationsEnabled();
     _loadLastLoadTime();
     _loadDefaultSchedule();
     _loadSentry();
@@ -66,25 +66,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // void _loadNotificationsEnabled() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   setState(
-  //     () {
-  //       _notificationsEnabled =
-  //           (prefs.getBool('_notificationsEnabled') ?? true);
-  //     },
-  //   );
-  // }
+  void _loadNotificationsEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        _notificationsEnabled =
+            (prefs.getBool('_notificationsEnabled') ?? true);
+      },
+    );
+  }
 
-  // void _toggleNotificationsEnabled(bool newState) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   setState(
-  //     () {
-  //       _notificationsEnabled = newState;
-  //       prefs.setBool('_notificationsEnabled', newState);
-  //     },
-  //   );
-  // }
+  void _toggleNotificationsEnabled(bool newState) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(
+      () {
+        _notificationsEnabled = newState;
+        prefs.setBool('_notificationsEnabled', newState);
+      },
+    );
+  }
 
   void _loadLastLoadTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -183,10 +183,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ToggleCard(
                     title: "Notifications",
                     subtitle:
-                        "If an error occurs, Sentry will send an error report to the developer",
-                    action: (newState) => {},
+                        "Schedules will alert you at certain time remainings. This can be customized on a per-schedule basis or globally.",
+                    action: (newState) => _toggleNotificationsEnabled(newState),
                     initialValue: _notificationsEnabled,
-                    disabled: true,
                   ),
                   ToggleCard(
                     title: "Error Logging",
