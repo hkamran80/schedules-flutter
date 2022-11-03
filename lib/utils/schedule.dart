@@ -30,14 +30,15 @@ class Schedule {
             : PeriodTimes(period["times"][0], period["times"][1]);
 
         bool allowEditing = true;
-        if (period is List && (originalPeriodName as String).contains("Passing (")) {
+        if (period is List &&
+            (originalPeriodName as String).contains("Passing (")) {
           allowEditing = false;
         } else if (period is! List) {
           allowEditing = period["allowEditing"];
         }
 
-        if (periods.every(
-            (schedulePeriod) => schedulePeriod.originalName != originalPeriodName)) {
+        if (periods.every((schedulePeriod) =>
+            schedulePeriod.originalName != originalPeriodName)) {
           String periodId = (originalPeriodName as String).slugify();
 
           String? customName = prefs.getString("$scheduleId.$periodId.name");
@@ -194,7 +195,8 @@ class Schedule {
         );
 
         final prefs = await SharedPreferences.getInstance();
-        if ((prefs.getBool("$scheduleId.${interval.id}") ?? true) &&
+        if ((prefs.getBool("_notificationsEnabled") ?? true) &&
+            (prefs.getBool("$scheduleId.${interval.id}") ?? true) &&
             (prefs.getBool(
                     "$scheduleId.${DateFormat.EEEE().format(DateTime.now()).toLowerCase()}") ??
                 true) &&
@@ -222,7 +224,8 @@ class Schedule {
 
   Future<void> _scheduleNotifications(Duration remaining) async {
     final prefs = await SharedPreferences.getInstance();
-    if (currentPeriodExists &&
+    if ((prefs.getBool("_notificationsEnabled") ?? true) &&
+        currentPeriodExists &&
         (prefs.getBool(
                 "$scheduleId.${DateFormat.EEEE().format(DateTime.now()).toLowerCase()}") ??
             true)) {

@@ -135,38 +135,47 @@ class _SchedulePeriodNamesSettingsScreenState
                             top: 6,
                             bottom: 6,
                           ),
-                          child: TextField(
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.pink,
-                                  width: 0.0,
-                                ),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              textSelectionTheme: const TextSelectionThemeData(
+                                cursorColor: Colors.pink,
+                                selectionColor: Colors.pink,
+                                selectionHandleColor: Colors.pink,
                               ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.pink,
-                                ),
-                              ),
-                              focusColor: Colors.pink,
-                              fillColor: Colors.pink,
-                              labelText: period.key.originalName,
-                              floatingLabelStyle: const TextStyle(
-                                color: Colors.pink,
-                              ),
-                              hintStyle: const TextStyle(
-                                color: Colors.pink,
-                              ),
-                              // hintText: 'Enter a search term',
                             ),
-                            style: const TextStyle(
-                              fontSize: 16,
-                            ),
-                            controller: TextEditingController()
-                              ..text = period.value,
-                            onSubmitted: (value) => _setPeriodName(
-                              period.key,
-                              value,
+                            child: TextField(
+                              decoration: InputDecoration(
+                                border: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.pink,
+                                    width: 0.0,
+                                  ),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.pink,
+                                  ),
+                                ),
+                                focusColor: Colors.pink,
+                                fillColor: Colors.pink,
+                                labelText: period.key.originalName,
+                                floatingLabelStyle: const TextStyle(
+                                  color: Colors.pink,
+                                ),
+                                hintStyle: const TextStyle(
+                                  color: Colors.pink,
+                                ),
+                                // hintText: 'Enter a search term',
+                              ),
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                              controller: TextEditingController()
+                                ..text = period.value,
+                              onSubmitted: (value) => _setPeriodName(
+                                period.key,
+                                value,
+                              ),
                             ),
                           ),
                         ),
