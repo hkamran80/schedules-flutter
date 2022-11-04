@@ -34,4 +34,9 @@ final List<Credit> credits = [
     icon: LucideIcons.layout,
     uri: Uri.parse("https://getfind.app"),
   ),
+  Credit(
+    name: "Krishna R.",
+    role: "UX Design",
+    icon: LucideIcons.layout,
+  ),
 ];
