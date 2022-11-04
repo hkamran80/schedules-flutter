@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:feather_icons/feather_icons.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -154,7 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Navigator.pushNamed(context, AboutScreen.routeName);
                 },
                 icon: const Icon(
-                  FeatherIcons.info,
+                  LucideIcons.info,
                   size: 20,
                 ),
               )
@@ -230,7 +230,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         DropdownButton(
                           icon: const Icon(
-                            FeatherIcons.chevronDown,
+                            LucideIcons.chevronDown,
                             size: 20,
                           ),
                           dropdownColor:

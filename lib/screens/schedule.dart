@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:feather_icons/feather_icons.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:schedules/modals/timetable.dart';
@@ -161,7 +161,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     ),
                   ),
                   icon: const Icon(
-                    FeatherIcons.calendar,
+                    LucideIcons.calendar,
                     size: 20,
                   ),
                 ),
@@ -209,7 +209,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     ? HexColor.fromHex("#F7F7F7")
                     : HexColor.fromHex("#151515"),
                 icon: const Icon(
-                  FeatherIcons.settings,
+                  LucideIcons.settings,
                   size: 20,
                 ),
                 position: PopupMenuPosition.under,

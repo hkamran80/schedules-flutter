@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:feather_icons/feather_icons.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -156,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   schedulesData.getSchedules();
                 },
                 icon: const Icon(
-                  FeatherIcons.refreshCw,
+                  LucideIcons.refreshCw,
                   size: 20,
                 ),
               ),
@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pushNamed(context, SettingsScreen.routeName);
                 },
                 icon: const Icon(
-                  FeatherIcons.settings,
+                  LucideIcons.settings,
                   size: 20,
                 ),
               )

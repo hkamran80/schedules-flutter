@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:feather_icons/feather_icons.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -76,13 +76,13 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ),
                   AboutCard(
-                    icon: FeatherIcons.info,
+                    icon: LucideIcons.info,
                     title: applicationName,
                     subtitle: "Version $_version ($_buildNumber)",
                   ),
                   InkWell(
                     child: const AboutCard(
-                      icon: FeatherIcons.github,
+                      icon: LucideIcons.github,
                       title: "Repository",
                       subtitle: "Opens in your browser",
                     ),
@@ -90,7 +90,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   InkWell(
                     child: const AboutCard(
-                      icon: FeatherIcons.flag,
+                      icon: LucideIcons.flag,
                       title: "Feedback",
                       subtitle: "Report a bug or request a feature",
                     ),
@@ -98,7 +98,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   InkWell(
                     child: const AboutCard(
-                      icon: FeatherIcons.list,
+                      icon: LucideIcons.list,
                       title: "Licenses",
                     ),
                     onTap: () {
@@ -159,7 +159,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   InkWell(
                     child: const AboutCard(
-                      icon: FeatherIcons.shield,
+                      icon: LucideIcons.shield,
                       title: "Terms of Service",
                       subtitle: "Opens in your browser",
                     ),
@@ -167,7 +167,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   InkWell(
                     child: const AboutCard(
-                      icon: FeatherIcons.shield,
+                      icon: LucideIcons.shield,
                       title: "Privacy Policy",
                       subtitle: "Opens in your browser",
                     ),
