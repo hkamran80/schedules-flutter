@@ -6,7 +6,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constants.dart';
 import '../credits.dart';
 import '../widgets/about_card.dart';
-import '../schedules_icons.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({Key? key}) : super(key: key);
@@ -152,7 +151,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                   ),
                   const AboutCard(
-                    icon: Schedules.copyright,
+                    icon: LucideIcons.copyright,
                     title: "Copyright",
                     subtitle:
                         "Copyright © 2022 UNISON Technologies Inc. All rights reserved.",
