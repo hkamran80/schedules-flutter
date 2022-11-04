@@ -106,7 +106,7 @@ class _AboutScreenState extends State<AboutScreen> {
                         applicationName: applicationName,
                         applicationVersion: "Version $_version ($_buildNumber)",
                         applicationLegalese:
-                            "Copyright © 2022 UNISON Technologies Inc. All rights reserved.",
+                            "Copyright © 2022 Thirteenth Willow. All rights reserved.",
                       );
                     },
                   ),
@@ -154,7 +154,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     icon: LucideIcons.copyright,
                     title: "Copyright",
                     subtitle:
-                        "Copyright © 2022 UNISON Technologies Inc. All rights reserved.",
+                        "Copyright © 2022 Thirteenth Willow. All rights reserved.",
                   ),
                   InkWell(
                     child: const AboutCard(
