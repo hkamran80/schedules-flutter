@@ -66,11 +66,6 @@ flutter:
         - assets/logo.png
         - assets/whats-new.json
 
-    fonts:
-        - family: Schedules
-          fonts:
-              - asset: fonts/Schedules.ttf
-
 flutter_icons:
     image_path: assets/logo-square.png
     android: false
