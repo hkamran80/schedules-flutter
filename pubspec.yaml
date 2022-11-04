@@ -1,5 +1,5 @@
 name: schedules
-description: An app for all schedules
+description: All your schedules in one place
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`.
