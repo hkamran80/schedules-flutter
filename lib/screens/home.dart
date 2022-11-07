@@ -4,11 +4,13 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:schedules/utils/schedule_variant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/color.dart';
 import '../modals/whats_new.dart';
 import '../provider/schedules.dart';
+import '../utils/schedule.dart';
 import 'settings.dart';
 import 'schedule.dart';
 
@@ -121,6 +123,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final schedulesData = Provider.of<SchedulesProvider>(context);
 
+    Map<String, VariantOrSchedule> schedulesList =
+        generateScheduleListWithVariants(
+      schedulesData.schedules,
+    );
+
     SchedulerBinding.instance.addPostFrameCallback(
       (_) {
         if (schedulesData.schedules.isNotEmpty &&
@@ -187,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 : schedulesData.schedules.isNotEmpty
                     ? SliverList(
                         delegate: SliverChildListDelegate(
-                          schedulesData.schedules.entries
+                          schedulesList.entries
                               .map(
                                 (schedule) => Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -197,24 +204,145 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         foregroundColor: HexColor.fromHex(
-                                                        schedule.value["color"])
+                                                        schedule.value.color)
                                                     .computeLuminance() >
                                                 0.5
                                             ? Colors.black
                                             : Colors.white,
                                         alignment: Alignment.centerLeft,
                                         backgroundColor: HexColor.fromHex(
-                                          schedule.value["color"],
+                                          schedule.value.color,
                                         ),
                                       ),
                                       onPressed: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          ScheduleScreen.routeName,
-                                          arguments: ScheduleScreenArguments(
-                                            schedule.key,
-                                          ),
-                                        );
+                                        if (schedule.value.type == Schedule) {
+                                          Navigator.pushNamed(
+                                            context,
+                                            ScheduleScreen.routeName,
+                                            arguments: ScheduleScreenArguments(
+                                              schedule.key,
+                                            ),
+                                          );
+                                        } else {
+                                          showModalBottomSheet(
+                                            elevation: 10,
+                                            backgroundColor: Theme.of(context)
+                                                .scaffoldBackgroundColor,
+                                            context: context,
+                                            builder: (ctx) => Container(
+                                              width:
+                                                  MediaQuery.of(ctx).size.width,
+                                              height: MediaQuery.of(ctx)
+                                                      .size
+                                                      .height *
+                                                  0.40,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(22),
+                                                color:
+                                                    Theme.of(ctx).brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.grey.shade900
+                                                        : Colors.grey.shade100,
+                                              ),
+                                              alignment: Alignment.center,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(25.0),
+                                                child: ListView(
+                                                  children: [
+                                                    Text(
+                                                      schedule.value.name,
+                                                      style: const TextStyle(
+                                                        fontSize: 20.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    ...schedule
+                                                        .value.variant!.variants
+                                                        .map(
+                                                          (variant) => Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .stretch,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  foregroundColor: HexColor.fromHex(schedule.value.color)
+                                                                              .computeLuminance() >
+                                                                          0.5
+                                                                      ? Colors
+                                                                          .black
+                                                                      : Colors
+                                                                          .white,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
+                                                                  backgroundColor:
+                                                                      HexColor
+                                                                          .fromHex(
+                                                                    schedule
+                                                                        .value
+                                                                        .color,
+                                                                  ),
+                                                                ),
+                                                                onPressed: () {
+                                                                  Navigator
+                                                                      .pushNamed(
+                                                                    context,
+                                                                    ScheduleScreen
+                                                                        .routeName,
+                                                                    arguments:
+                                                                        ScheduleScreenArguments(
+                                                                      variant
+                                                                          .id,
+                                                                    ),
+                                                                  );
+                                                                },
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .fromLTRB(
+                                                                    0,
+                                                                    15,
+                                                                    0,
+                                                                    15,
+                                                                  ),
+                                                                  child: Text(
+                                                                    variant
+                                                                        .name,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontSize:
+                                                                          16.0,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 15,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                        .toList()
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.fromLTRB(
@@ -224,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           15,
                                         ),
                                         child: Text(
-                                          schedule.value["name"],
+                                          schedule.value.name,
                                           style: const TextStyle(
                                             fontSize: 16.0,
                                           ),
