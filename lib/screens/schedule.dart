@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -197,7 +198,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     ),
                   ),
                 ],
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == "notifications") {
                     Navigator.pushNamed(
                       context,
@@ -216,9 +217,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     );
                   } else if (value == "exportSettings") {
                     Clipboard.setData(
-                      const ClipboardData(
-                        text:
-                            "This is a test of Schedules' export functionality",
+                      ClipboardData(
+                        text: jsonEncode(
+                          await widget.schedule.generateExport(),
+                        ),
                       ),
                     ).then(
                       (_) {
