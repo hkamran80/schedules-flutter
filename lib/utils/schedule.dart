@@ -284,6 +284,64 @@ class Schedule {
         scheduledTime.hour.twoDigits() +
         scheduledTime.minute.twoDigits());
   }
+
+  Future<Map<String, dynamic>> generateExport() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    Map<String, String> exportPeriods = periods
+        .where(
+      (period) => period.allowEditing == true,
+    )
+        .fold(
+      {},
+      (previous, period) => {
+        ...previous,
+        period.originalName: period.name.contains(" (")
+            ? period.name.replaceAll(" (${period.originalName})", "")
+            : ""
+      },
+    );
+
+    // Allowed notifications
+    Map<String, bool> exportNotificationIntervals = {};
+    Map<String, bool> exportNotificationDays = {};
+    Map<String, bool> exportNotificationPeriods = {};
+
+    for (var interval in notificationIntervals) {
+      exportNotificationIntervals[interval.exportId] =
+          (prefs.getBool("$scheduleId.${interval.id}") ?? true);
+    }
+
+    List<String> days =
+        (schedule["schedule"] as Map<String, dynamic>).keys.toList();
+
+    for (var day in notificationDays) {
+      if (days.contains(day.day.substring(0, 3).toUpperCase())) {
+        exportNotificationDays[day.id] =
+            (prefs.getBool("$scheduleId.${day.id}") ?? true);
+      }
+    }
+
+    for (var period in periods) {
+      exportNotificationPeriods[period.originalName] =
+          (prefs.getBool("$scheduleId.${period.id}") ?? true);
+    }
+
+    Map<String, Map<String, bool>> exportNotifications = {
+      "intervals": exportNotificationIntervals,
+      "days": exportNotificationDays,
+      "periods": exportNotificationPeriods
+    };
+
+    Map<String, dynamic> export = {
+      "hour24": (prefs.getBool('_hour24Enabled') ?? false),
+      "periodNames": exportPeriods,
+      "notifications": (prefs.getBool('_notificationsEnabled') ?? true),
+      "allowedNotifications": exportNotifications,
+    };
+
+    return export;
+  }
 }
 
 class Period {
