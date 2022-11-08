@@ -2,15 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:schedules/utils/schedule_variant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/color.dart';
-import '../modals/whats_new.dart';
 import '../provider/schedules.dart';
 import '../utils/schedule.dart';
+import '../utils/schedule_variant.dart';
 import 'settings.dart';
 import 'schedule.dart';
 
@@ -34,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _getSchedules();
     _loadDefaultSchedule();
-    _checkForNewVersion();
   }
 
   @override
@@ -49,17 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     schedulesData.getSchedules();
-  }
-
-  Future<void> _checkForNewVersion() async {
-    final prefs = await SharedPreferences.getInstance();
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-    String savedBuildNumber = (prefs.getString("buildNumber") ?? "");
-    if (savedBuildNumber != "" && savedBuildNumber != packageInfo.buildNumber) {
-      // ignore: use_build_context_synchronously
-      _showWhatsNew(context);
-    }
   }
 
   Future<void> _loadDefaultSchedule() async {
@@ -78,29 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
         prefs.setString('_defaultSchedule', "");
         _defaultSchedule = "";
       },
-    );
-  }
-
-  void _showWhatsNew(BuildContext ctx) {
-    showModalBottomSheet(
-      elevation: 10,
-      backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
-      context: ctx,
-      builder: (ctx) => Container(
-        width: MediaQuery.of(ctx).size.width,
-        height: MediaQuery.of(ctx).size.height * 0.25,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
-          color: Theme.of(ctx).brightness == Brightness.dark
-              ? Colors.grey.shade900
-              : Colors.grey.shade100,
-        ),
-        alignment: Alignment.center,
-        child: const Padding(
-          padding: EdgeInsets.all(25.0),
-          child: WhatsNew(),
-        ),
-      ),
     );
   }
 
