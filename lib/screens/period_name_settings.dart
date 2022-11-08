@@ -125,6 +125,12 @@ class _SchedulePeriodNamesSettingsScreenState
                       color: Colors.pink,
                     ),
                   ),
+                  const Text(
+                    "To load your updated period names, please exit the schedule, then re-enter it",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                    ),
+                  ),
                   const SizedBox(
                     height: 6,
                   ),
@@ -143,39 +149,52 @@ class _SchedulePeriodNamesSettingsScreenState
                                 selectionHandleColor: Colors.pink,
                               ),
                             ),
-                            child: TextField(
-                              decoration: InputDecoration(
-                                border: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.pink,
-                                    width: 0.0,
+                            child: Builder(
+                              builder: (BuildContext context) {
+                                TextEditingController controller =
+                                    TextEditingController();
+                                controller.text = period.value;
+
+                                return Focus(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      border: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.pink,
+                                          width: 0.0,
+                                        ),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.pink,
+                                        ),
+                                      ),
+                                      focusColor: Colors.pink,
+                                      fillColor: Colors.pink,
+                                      labelText: period.key.originalName,
+                                      floatingLabelStyle: const TextStyle(
+                                        color: Colors.pink,
+                                      ),
+                                      hintStyle: const TextStyle(
+                                        color: Colors.pink,
+                                      ),
+                                      // hintText: 'Enter a search term',
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                    controller: controller,
+                                    onSubmitted: (value) => _setPeriodName(
+                                      period.key,
+                                      value,
+                                    ),
                                   ),
-                                ),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.pink,
+                                  onFocusChange: (hasFocus) => _setPeriodName(
+                                    period.key,
+                                    controller.text,
                                   ),
-                                ),
-                                focusColor: Colors.pink,
-                                fillColor: Colors.pink,
-                                labelText: period.key.originalName,
-                                floatingLabelStyle: const TextStyle(
-                                  color: Colors.pink,
-                                ),
-                                hintStyle: const TextStyle(
-                                  color: Colors.pink,
-                                ),
-                                // hintText: 'Enter a search term',
-                              ),
-                              style: const TextStyle(
-                                fontSize: 16,
-                              ),
-                              controller: TextEditingController()
-                                ..text = period.value,
-                              onSubmitted: (value) => _setPeriodName(
-                                period.key,
-                                value,
-                              ),
+                                );
+                              },
                             ),
                           ),
                         ),
