@@ -1,12 +1,14 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schedules/modals/timetable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/color.dart';
+import '../modals/timetable.dart';
 import '../provider/schedules.dart';
 import '../utils/schedule.dart';
 import '../widgets/stacked_card.dart';
@@ -185,6 +187,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       ),
                     ),
                   ),
+                  PopupMenuItem(
+                    value: "exportSettings",
+                    child: Text(
+                      "Export Settings",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
                 ],
                 onSelected: (value) {
                   if (value == "notifications") {
@@ -202,6 +213,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       arguments: ScheduleScreenArguments(
                         widget.args.scheduleId,
                       ),
+                    );
+                  } else if (value == "exportSettings") {
+                    Clipboard.setData(
+                      const ClipboardData(
+                        text:
+                            "This is a test of Schedules' export functionality",
+                      ),
+                    ).then(
+                      (_) {
+                        Fluttertoast.showToast(
+                          msg: "Exported settings!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                      },
                     );
                   }
                 },
