@@ -14,6 +14,7 @@ import 'screens/schedule.dart';
 import 'screens/settings.dart';
 import 'utils/notification_service.dart';
 import 'utils/schedule.dart';
+import 'utils/snackbar.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +49,7 @@ class SchedulesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schedules',
+      scaffoldMessengerKey: SnackbarGlobal.key,
       theme: ThemeData(
         primarySwatch: Colors.pink,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
