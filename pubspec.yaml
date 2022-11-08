@@ -38,6 +38,7 @@ dependencies:
     timezone: ^0.8.0
     crypto: ^3.0.2
     lucide_icons: ^0.98.0
+    fluttertoast: ^8.1.1
 
 dev_dependencies:
     flutter_test:
