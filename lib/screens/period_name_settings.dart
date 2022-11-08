@@ -186,12 +186,12 @@ class _SchedulePeriodNamesSettingsScreenState
                                     controller: controller,
                                     onSubmitted: (value) => _setPeriodName(
                                       period.key,
-                                      value,
+                                      value.trim(),
                                     ),
                                   ),
                                   onFocusChange: (hasFocus) => _setPeriodName(
                                     period.key,
-                                    controller.text,
+                                    controller.text.trim(),
                                   ),
                                 );
                               },
