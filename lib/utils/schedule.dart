@@ -333,14 +333,12 @@ class Schedule {
       "periods": exportNotificationPeriods
     };
 
-    Map<String, dynamic> export = {
+    return {
       "hour24": (prefs.getBool('_hour24Enabled') ?? false),
       "periodNames": exportPeriods,
       "notifications": (prefs.getBool('_notificationsEnabled') ?? true),
       "allowedNotifications": exportNotifications,
     };
-
-    return export;
   }
 }
 
