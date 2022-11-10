@@ -21,9 +21,12 @@ class Schedule {
 
   Schedule(this.scheduleId, this.schedule);
 
+  Map<String, dynamic> get periodSchedule =>
+      schedule["schedule"] as Map<String, dynamic>;
+
   void generateDayPeriods(String day) async {
     final prefs = await SharedPreferences.getInstance();
-    if ((schedule["schedule"] as Map<String, dynamic>).containsKey(day)) {
+    if (periodSchedule.containsKey(day)) {
       final Map<dynamic, dynamic> daySchedule = schedule["schedule"][day];
 
       for (final originalPeriodName in daySchedule.keys) {
@@ -67,8 +70,7 @@ class Schedule {
   }
 
   List<Period?> daySchedule(String day) {
-    if ((schedule["schedule"] as Map<String, dynamic>).containsKey(day) &&
-        periods.isNotEmpty) {
+    if (periodSchedule.containsKey(day) && periods.isNotEmpty) {
       return (schedule["schedule"][day] as Map<String, dynamic>).keys.map(
         (schedulePeriodName) {
           return periods.firstWhere(
@@ -316,8 +318,7 @@ class Schedule {
           (prefs.getBool("$scheduleId.${interval.id}") ?? true);
     }
 
-    List<String> days =
-        (schedule["schedule"] as Map<String, dynamic>).keys.toList();
+    List<String> days = periodSchedule.keys.toList();
 
     for (var day in notificationDays) {
       if (days.contains(day.day.substring(0, 3).toUpperCase())) {
@@ -378,8 +379,7 @@ class Schedule {
 
           if (periods.isEmpty) {
             print("Generating periods...");
-            for (String day
-                in (schedule["schedule"] as Map<String, dynamic>).keys) {
+            for (String day in periodSchedule.keys) {
               generateDayPeriods(day);
               print(periods.length);
             }
