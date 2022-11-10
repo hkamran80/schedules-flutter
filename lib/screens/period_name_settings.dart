@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:schedules/utils/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../provider/schedules.dart';
+import '../utils/schedule.dart';
 
 class SchedulePeriodNamesSettingsScreen extends StatefulWidget {
   const SchedulePeriodNamesSettingsScreen({

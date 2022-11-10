@@ -1,4 +1,4 @@
-import 'package:schedules/extensions/string.dart';
+import 'extensions/string.dart';
 
 class NotificationInterval {
   List<int> array;

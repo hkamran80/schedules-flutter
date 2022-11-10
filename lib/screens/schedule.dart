@@ -7,7 +7,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:schedules/screens/import_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/color.dart';
@@ -16,6 +15,7 @@ import '../provider/schedules.dart';
 import '../utils/schedule.dart';
 import '../widgets/stacked_card.dart';
 import '../extensions/string.dart';
+import 'import_settings.dart';
 import 'notification_settings.dart';
 import 'period_name_settings.dart';
 
