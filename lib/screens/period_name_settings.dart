@@ -139,7 +139,6 @@ class _SchedulePeriodNamesSettingsScreenState
                                       hintStyle: const TextStyle(
                                         color: Colors.pink,
                                       ),
-                                      // hintText: 'Enter a search term',
                                     ),
                                     style: const TextStyle(
                                       fontSize: 16,
