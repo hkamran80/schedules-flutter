@@ -86,22 +86,34 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                       alignment: Alignment.centerLeft,
                       backgroundColor: Colors.pink,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (importTextController.text.trim().isNotEmpty) {
-                        try {
-                          schedule.importSettings(
-                            importTextController.text.trim(),
-                          );
-                        } catch (error) {
-                          print(error);
+                        String result = await schedule.importSettings(
+                          importTextController.text.trim(),
+                        );
+
+                        if (result == "SUCCESS") {
+                          setState(() => Navigator.pop(context));
+
                           Fluttertoast.showToast(
-                              msg: "Error: $error",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 2,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
+                            msg: "Successfully imported settings!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.green,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: "Error: $result",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
                         }
                       }
                     },
