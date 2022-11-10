@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'screens/import_settings.dart';
 import 'screens/notification_settings.dart';
 import 'screens/period_name_settings.dart';
 import 'secrets.dart';
@@ -132,6 +133,23 @@ class SchedulesApp extends StatelessWidget {
               Provider.of<SchedulesProvider>(context);
 
           return SchedulePeriodNamesSettingsScreen(
+            scheduleId: args.scheduleId,
+            schedulesData: schedulesData,
+            schedule: Schedule(
+              args.scheduleId,
+              schedulesData.schedules[args.scheduleId],
+            ),
+          );
+        },
+        ImportSettingsScreen.routeName: (context) {
+          ScheduleScreenArguments args = ModalRoute.of(context)!
+              .settings
+              .arguments as ScheduleScreenArguments;
+
+          SchedulesProvider schedulesData =
+              Provider.of<SchedulesProvider>(context);
+
+          return ImportSettingsScreen(
             scheduleId: args.scheduleId,
             schedulesData: schedulesData,
             schedule: Schedule(
