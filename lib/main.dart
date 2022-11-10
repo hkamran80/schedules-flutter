@@ -14,7 +14,6 @@ import 'screens/home.dart';
 import 'screens/schedule.dart';
 import 'screens/settings.dart';
 import 'utils/notification_service.dart';
-import 'utils/schedule.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
