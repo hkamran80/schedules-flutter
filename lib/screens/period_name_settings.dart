@@ -55,12 +55,10 @@ class _SchedulePeriodNamesSettingsScreenState
       _loadPeriodNames(schedule.periods);
     }
 
-    Future<void> setPeriodName(
+    void setPeriodName(
       Period period,
       String newValue,
-    ) async {
-      final prefs = await SharedPreferences.getInstance();
-
+    ) {
       setState(
         () {
           _periods[period] = newValue;
