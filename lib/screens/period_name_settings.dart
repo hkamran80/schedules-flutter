@@ -44,20 +44,6 @@ class _SchedulePeriodNamesSettingsScreenState
     );
   }
 
-  Future<void> _setPeriodName(
-    Period period,
-    String newValue,
-  ) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    setState(
-      () {
-        _periods[period] = newValue;
-        prefs.setString("${widget.scheduleId}.${period.id}.name", newValue);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
@@ -67,6 +53,20 @@ class _SchedulePeriodNamesSettingsScreenState
 
     if (_periods.isEmpty) {
       _loadPeriodNames(schedule.periods);
+    }
+
+    Future<void> setPeriodName(
+      Period period,
+      String newValue,
+    ) async {
+      final prefs = await SharedPreferences.getInstance();
+
+      setState(
+        () {
+          _periods[period] = newValue;
+          schedule.editPeriodName(period.originalName, newValue);
+        },
+      );
     }
 
     return Material(
@@ -92,12 +92,6 @@ class _SchedulePeriodNamesSettingsScreenState
                     "Period Names",
                     style: TextStyle(
                       color: Colors.pink,
-                    ),
-                  ),
-                  const Text(
-                    "To load your updated period names, please exit the schedule, then re-enter it",
-                    style: TextStyle(
-                      fontSize: 12.0,
                     ),
                   ),
                   const SizedBox(
@@ -153,12 +147,12 @@ class _SchedulePeriodNamesSettingsScreenState
                                       fontSize: 16,
                                     ),
                                     controller: controller,
-                                    onSubmitted: (value) => _setPeriodName(
+                                    onSubmitted: (value) => setPeriodName(
                                       period.key,
                                       value.trim(),
                                     ),
                                   ),
-                                  onFocusChange: (hasFocus) => _setPeriodName(
+                                  onFocusChange: (hasFocus) => setPeriodName(
                                     period.key,
                                     controller.text.trim(),
                                   ),
