@@ -11,15 +11,10 @@ class ImportSettingsScreen extends StatefulWidget {
   const ImportSettingsScreen({
     Key? key,
     required this.scheduleId,
-    required this.schedulesData,
-    required this.schedule,
   }) : super(key: key);
 
   static const routeName = "/schedule/settingsImport";
-
   final String scheduleId;
-  final SchedulesProvider schedulesData;
-  final Schedule schedule;
 
   @override
   State<ImportSettingsScreen> createState() => _ImportSettingsScreenState();
@@ -34,6 +29,9 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final schedules = Provider.of<SchedulesProvider>(context);
+    final schedule = schedules.scheduleMap[widget.scheduleId]!;
+
     TextEditingController importTextController = TextEditingController();
 
     return Material(
@@ -43,7 +41,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
           SliverAppBar.medium(
             backgroundColor: backgroundColor,
             title: Text(
-              "${widget.schedulesData.schedules[widget.scheduleId]["shortName"]}: Import Settings",
+              "${schedule.shortName}: Import Settings",
             ),
           ),
           SliverPadding(
@@ -94,7 +92,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                     onPressed: () {
                       if (importTextController.text.trim().isNotEmpty) {
                         try {
-                          widget.schedule.importSettings(
+                          schedule.importSettings(
                             importTextController.text.trim(),
                           );
                         } catch (error) {

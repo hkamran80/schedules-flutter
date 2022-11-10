@@ -21,12 +21,18 @@ class Schedule {
 
   Schedule(this.scheduleId, this.schedule);
 
+  String get name => schedule["name"];
+  String get shortName => schedule["shortName"];
+  String get color => schedule["color"];
+
+  Map<String, dynamic> get periodSchedule =>
+      schedule["schedule"] as Map<String, dynamic>;
+
   void generateDayPeriods(String day) async {
     final prefs = await SharedPreferences.getInstance();
-    if ((schedule["schedule"] as Map<String, dynamic>).containsKey(day)) {
+    if (periodSchedule.containsKey(day)) {
       final Map<dynamic, dynamic> daySchedule = schedule["schedule"][day];
-
-      for (final originalPeriodName in daySchedule.keys) {
+      for (String originalPeriodName in daySchedule.keys) {
         final period = daySchedule[originalPeriodName];
 
         PeriodTimes times = period is List
@@ -34,8 +40,7 @@ class Schedule {
             : PeriodTimes(period["times"][0], period["times"][1]);
 
         bool allowEditing = true;
-        if (period is List &&
-            (originalPeriodName as String).contains("Passing (")) {
+        if (period is List && originalPeriodName.contains("Passing (")) {
           allowEditing = false;
         } else if (period is! List) {
           allowEditing = period["allowEditing"];
@@ -43,15 +48,11 @@ class Schedule {
 
         if (periods.every((schedulePeriod) =>
             schedulePeriod.originalName != originalPeriodName)) {
-          String periodId = (originalPeriodName as String).slugify();
-
-          String? customName = prefs.getString("$scheduleId.$periodId.name");
-          String newPeriodName;
-          if (customName != null) {
-            newPeriodName = "$customName ($originalPeriodName)";
-          } else {
-            newPeriodName = originalPeriodName;
-          }
+          String? customName = prefs
+              .getString("$scheduleId.${originalPeriodName.slugify()}.name");
+          String newPeriodName = customName != null
+              ? "$customName ($originalPeriodName)"
+              : originalPeriodName;
 
           periods.add(
             Period(
@@ -67,8 +68,7 @@ class Schedule {
   }
 
   List<Period?> daySchedule(String day) {
-    if ((schedule["schedule"] as Map<String, dynamic>).containsKey(day) &&
-        periods.isNotEmpty) {
+    if (periodSchedule.containsKey(day) && periods.isNotEmpty) {
       return (schedule["schedule"][day] as Map<String, dynamic>).keys.map(
         (schedulePeriodName) {
           return periods.firstWhere(
@@ -316,8 +316,7 @@ class Schedule {
           (prefs.getBool("$scheduleId.${interval.id}") ?? true);
     }
 
-    List<String> days =
-        (schedule["schedule"] as Map<String, dynamic>).keys.toList();
+    List<String> days = periodSchedule.keys.toList();
 
     for (var day in notificationDays) {
       if (days.contains(day.day.substring(0, 3).toUpperCase())) {
@@ -378,8 +377,7 @@ class Schedule {
 
           if (periods.isEmpty) {
             print("Generating periods...");
-            for (String day
-                in (schedule["schedule"] as Map<String, dynamic>).keys) {
+            for (String day in periodSchedule.keys) {
               generateDayPeriods(day);
               print(periods.length);
             }
