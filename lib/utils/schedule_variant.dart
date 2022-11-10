@@ -1,5 +1,6 @@
-import 'package:schedules/utils/schedule.dart';
 import 'package:collection/collection.dart';
+
+import 'schedule.dart';
 
 class ScheduleVariant {
   String name;
