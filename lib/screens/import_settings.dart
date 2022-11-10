@@ -76,6 +76,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                     style: const TextStyle(
                       fontSize: 16,
                     ),
+                    textInputAction: TextInputAction.done,
                     controller: importTextController,
                     maxLines: null,
                   ),
