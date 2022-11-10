@@ -52,7 +52,6 @@ class SchedulesApp extends StatelessWidget {
         primarySwatch: Colors.pink,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
         useMaterial3: true,
-        // typography
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -80,6 +79,11 @@ class SchedulesApp extends StatelessWidget {
               fontSize: 18.0,
             ),
           ),
+        ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.pink,
+          selectionColor: Colors.pink,
+          selectionHandleColor: Colors.pink,
         ),
         toggleableActiveColor: Colors.pink,
         primaryColor: Colors.white,
