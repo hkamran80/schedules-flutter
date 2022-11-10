@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -12,12 +13,9 @@ import 'about.dart';
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     Key? key,
-    required this.schedulesData,
   }) : super(key: key);
 
   static const routeName = "/settings";
-
-  final SchedulesProvider schedulesData;
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -138,6 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final schedules = Provider.of<SchedulesProvider>(context);
 
     return Material(
       color: backgroundColor,
@@ -245,14 +244,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       const BoxConstraints(minWidth: 100),
                                   child: const Text("None"),
                                 ),
-                                ...widget.schedulesData.schedules.entries
+                                ...schedules.scheduleMap.values
                                     .map(
                                       (schedule) => Container(
                                         alignment: Alignment.centerRight,
                                         constraints:
                                             const BoxConstraints(minWidth: 100),
                                         child: Text(
-                                          schedule.value["shortName"] as String,
+                                          schedule.shortName,
                                         ),
                                       ),
                                     )
@@ -268,12 +267,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                             ),
-                            ...widget.schedulesData.schedules.entries
+                            ...schedules.scheduleMap.values
                                 .map(
                                   (schedule) => DropdownMenuItem(
-                                    value: schedule.key as String,
+                                    value: schedule.scheduleId,
                                     child: Text(
-                                      schedule.value["name"] as String,
+                                      schedule.name,
                                       style: const TextStyle(
                                         fontSize: 14,
                                       ),
