@@ -364,9 +364,6 @@ class Schedule {
       if (json.containsKey("hour24") &&
           json.containsKey("periodNames") &&
           json.containsKey("notifications")) {
-        Map<String, String> periodNames =
-            ((json["periodNames"] as LinkedHashMap).cast<String, String>());
-
         // TODO: Add check for `periodNames` (uses `CastMap`)
         if (json["hour24"].runtimeType == bool &&
             json["notifications"].runtimeType == bool) {
@@ -376,31 +373,12 @@ class Schedule {
               .toList();
 
           if (periods.isEmpty) {
-            print("Generating periods...");
             for (String day in periodSchedule.keys) {
               generateDayPeriods(day);
-              print(periods.length);
             }
-            print("Generated periods!");
-            print(_periodNames);
-            print(periods);
           }
 
-          Map<String, String> generatedPeriodNames = periods
-              .where(
-            (period) => period.allowEditing == true,
-          )
-              .fold(
-            {},
-            (previous, period) => {
-              ...previous,
-              period.originalName: period.name.contains(" (")
-                  ? period.name.replaceAll(" (${period.originalName})", "")
-                  : ""
-            },
-          );
-
-          List<String> originalPeriodNames = generatedPeriodNames.keys.toList();
+          List<String> originalPeriodNames = _periodNames.keys.toList();
 
           bool difference = importNames
               .toSet()
@@ -408,29 +386,6 @@ class Schedule {
               .isEmpty;
           bool lengthDifference =
               importNames.length == originalPeriodNames.length;
-
-          print("S");
-          print(scheduleId);
-          print(schedule);
-          print("PN");
-          print(periods);
-          print(periods.where((period) => period.allowEditing == true));
-          print(
-            periods
-                .where((period) => period.allowEditing == true)
-                .map((period) => period.originalName),
-          );
-
-          print("PNC");
-          print(
-            importNames.toSet().difference(originalPeriodNames.toSet()),
-          );
-          print(importNames);
-          print(originalPeriodNames);
-          print(_periodNames);
-          print(_periodNames.keys);
-          print(_periodNames.keys.toList());
-          print(difference);
 
           if (difference && lengthDifference) {
             final prefs = await SharedPreferences.getInstance();
