@@ -134,12 +134,7 @@ class SchedulesApp extends StatelessWidget {
             ),
           );
         },
-        SettingsScreen.routeName: (context) {
-          SchedulesProvider schedulesData =
-              Provider.of<SchedulesProvider>(context);
-
-          return SettingsScreen(schedulesData: schedulesData);
-        },
+        SettingsScreen.routeName: (context) => SettingsScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
       },
     );
