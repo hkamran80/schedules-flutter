@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'screens/import_settings.dart';
 import 'screens/notification_settings.dart';
 import 'screens/period_name_settings.dart';
 import 'secrets.dart';
@@ -13,7 +14,6 @@ import 'screens/home.dart';
 import 'screens/schedule.dart';
 import 'screens/settings.dart';
 import 'utils/notification_service.dart';
-import 'utils/schedule.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +52,6 @@ class SchedulesApp extends StatelessWidget {
         primarySwatch: Colors.pink,
         textTheme: GoogleFonts.nunitoSansTextTheme(),
         useMaterial3: true,
-        // typography
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
@@ -81,6 +80,11 @@ class SchedulesApp extends StatelessWidget {
             ),
           ),
         ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.pink,
+          selectionColor: Colors.pink,
+          selectionHandleColor: Colors.pink,
+        ),
         toggleableActiveColor: Colors.pink,
         primaryColor: Colors.white,
       ),
@@ -94,16 +98,8 @@ class SchedulesApp extends StatelessWidget {
               .settings
               .arguments as ScheduleScreenArguments;
 
-          SchedulesProvider schedulesData =
-              Provider.of<SchedulesProvider>(context);
-
           return ScheduleScreen(
-            args: args,
-            schedulesData: schedulesData,
-            schedule: Schedule(
-              args.scheduleId,
-              schedulesData.schedules[args.scheduleId],
-            ),
+            scheduleId: args.scheduleId,
           );
         },
         ScheduleNotificationsSettingsScreen.routeName: (context) {
@@ -111,16 +107,8 @@ class SchedulesApp extends StatelessWidget {
               .settings
               .arguments as ScheduleScreenArguments;
 
-          SchedulesProvider schedulesData =
-              Provider.of<SchedulesProvider>(context);
-
           return ScheduleNotificationsSettingsScreen(
             scheduleId: args.scheduleId,
-            schedulesData: schedulesData,
-            schedule: Schedule(
-              args.scheduleId,
-              schedulesData.schedules[args.scheduleId],
-            ),
           );
         },
         SchedulePeriodNamesSettingsScreen.routeName: (context) {
@@ -128,24 +116,20 @@ class SchedulesApp extends StatelessWidget {
               .settings
               .arguments as ScheduleScreenArguments;
 
-          SchedulesProvider schedulesData =
-              Provider.of<SchedulesProvider>(context);
-
           return SchedulePeriodNamesSettingsScreen(
             scheduleId: args.scheduleId,
-            schedulesData: schedulesData,
-            schedule: Schedule(
-              args.scheduleId,
-              schedulesData.schedules[args.scheduleId],
-            ),
           );
         },
-        SettingsScreen.routeName: (context) {
-          SchedulesProvider schedulesData =
-              Provider.of<SchedulesProvider>(context);
+        ImportSettingsScreen.routeName: (context) {
+          ScheduleScreenArguments args = ModalRoute.of(context)!
+              .settings
+              .arguments as ScheduleScreenArguments;
 
-          return SettingsScreen(schedulesData: schedulesData);
+          return ImportSettingsScreen(
+            scheduleId: args.scheduleId,
+          );
         },
+        SettingsScreen.routeName: (context) => const SettingsScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
       },
     );

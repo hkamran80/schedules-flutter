@@ -1,7 +1,7 @@
-import 'package:schedules/utils/schedule.dart';
 import 'package:collection/collection.dart';
 
-// TODO: Move classes to separate file
+import 'schedule.dart';
+
 class ScheduleVariant {
   String name;
   String color;

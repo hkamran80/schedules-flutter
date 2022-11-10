@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:schedules/utils/schedule.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../provider/schedules.dart';
+import '../utils/schedule.dart';
 
 class SchedulePeriodNamesSettingsScreen extends StatefulWidget {
   const SchedulePeriodNamesSettingsScreen({
     Key? key,
     required this.scheduleId,
-    required this.schedulesData,
-    required this.schedule,
   }) : super(key: key);
 
   static const routeName = "/schedule/periodNames";
 
   final String scheduleId;
-  final SchedulesProvider schedulesData;
-  final Schedule schedule;
 
   @override
   State<SchedulePeriodNamesSettingsScreen> createState() =>
@@ -30,44 +27,10 @@ class _SchedulePeriodNamesSettingsScreenState
   @override
   void initState() {
     super.initState();
-    _loadPeriodNames();
   }
 
-  void _loadPeriodNames() async {
+  void _loadPeriodNames(Set<Period> periods) async {
     final prefs = await SharedPreferences.getInstance();
-    Set<Period> periods = {};
-
-    for (var day in widget.schedule.schedule["schedule"].keys) {
-      final Map<dynamic, dynamic> daySchedule =
-          widget.schedule.schedule["schedule"][day];
-
-      for (final periodName in daySchedule.keys) {
-        final period = daySchedule[periodName];
-
-        PeriodTimes times = period is List
-            ? PeriodTimes(period[0], period[1])
-            : PeriodTimes(period["times"][0], period["times"][1]);
-
-        bool allowEditing = true;
-        if (period is List && (periodName as String).contains("Passing (")) {
-          allowEditing = false;
-        } else if (period is! List) {
-          allowEditing = period["allowEditing"];
-        }
-
-        if (periods.every(
-            (schedulePeriod) => schedulePeriod.originalName != periodName)) {
-          periods.add(
-            Period(
-              periodName,
-              periodName,
-              times,
-              allowEditing,
-            ),
-          );
-        }
-      }
-    }
 
     setState(
       () {
@@ -81,24 +44,28 @@ class _SchedulePeriodNamesSettingsScreenState
     );
   }
 
-  Future<void> _setPeriodName(
-    Period period,
-    String newValue,
-  ) async {
-    final prefs = await SharedPreferences.getInstance();
-
-    setState(
-      () {
-        _periods[period] = newValue;
-        prefs.setString("${widget.scheduleId}.${period.id}.name", newValue);
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+    final schedules = Provider.of<SchedulesProvider>(context);
+    final schedule = schedules.scheduleMap[widget.scheduleId]!;
+
+    if (_periods.isEmpty) {
+      _loadPeriodNames(schedule.periods);
+    }
+
+    void setPeriodName(
+      Period period,
+      String newValue,
+    ) {
+      setState(
+        () {
+          _periods[period] = newValue;
+          schedule.editPeriodName(period.originalName, newValue);
+        },
+      );
+    }
 
     return Material(
       color: backgroundColor,
@@ -107,7 +74,7 @@ class _SchedulePeriodNamesSettingsScreenState
           SliverAppBar.medium(
             backgroundColor: backgroundColor,
             title: Text(
-              "${widget.schedulesData.schedules[widget.scheduleId]["shortName"]}: Period Names",
+              "${schedule.shortName}: Period Names",
             ),
           ),
           SliverPadding(
@@ -123,12 +90,6 @@ class _SchedulePeriodNamesSettingsScreenState
                     "Period Names",
                     style: TextStyle(
                       color: Colors.pink,
-                    ),
-                  ),
-                  const Text(
-                    "To load your updated period names, please exit the schedule, then re-enter it",
-                    style: TextStyle(
-                      fontSize: 12.0,
                     ),
                   ),
                   const SizedBox(
@@ -178,20 +139,19 @@ class _SchedulePeriodNamesSettingsScreenState
                                       hintStyle: const TextStyle(
                                         color: Colors.pink,
                                       ),
-                                      // hintText: 'Enter a search term',
                                     ),
                                     style: const TextStyle(
                                       fontSize: 16,
                                     ),
                                     controller: controller,
-                                    onSubmitted: (value) => _setPeriodName(
+                                    onSubmitted: (value) => setPeriodName(
                                       period.key,
-                                      value,
+                                      value.trim(),
                                     ),
                                   ),
-                                  onFocusChange: (hasFocus) => _setPeriodName(
+                                  onFocusChange: (hasFocus) => setPeriodName(
                                     period.key,
-                                    controller.text,
+                                    controller.text.trim(),
                                   ),
                                 );
                               },

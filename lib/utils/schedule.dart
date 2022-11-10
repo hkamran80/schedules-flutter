@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -17,12 +20,18 @@ class Schedule {
 
   Schedule(this.scheduleId, this.schedule);
 
+  String get name => schedule["name"];
+  String get shortName => schedule["shortName"];
+  String get color => schedule["color"];
+
+  Map<String, dynamic> get periodSchedule =>
+      schedule["schedule"] as Map<String, dynamic>;
+
   void generateDayPeriods(String day) async {
     final prefs = await SharedPreferences.getInstance();
-    if ((schedule["schedule"] as Map<String, dynamic>).containsKey(day)) {
+    if (periodSchedule.containsKey(day)) {
       final Map<dynamic, dynamic> daySchedule = schedule["schedule"][day];
-
-      for (final originalPeriodName in daySchedule.keys) {
+      for (String originalPeriodName in daySchedule.keys) {
         final period = daySchedule[originalPeriodName];
 
         PeriodTimes times = period is List
@@ -30,8 +39,7 @@ class Schedule {
             : PeriodTimes(period["times"][0], period["times"][1]);
 
         bool allowEditing = true;
-        if (period is List &&
-            (originalPeriodName as String).contains("Passing (")) {
+        if (period is List && originalPeriodName.contains("Passing (")) {
           allowEditing = false;
         } else if (period is! List) {
           allowEditing = period["allowEditing"];
@@ -39,15 +47,11 @@ class Schedule {
 
         if (periods.every((schedulePeriod) =>
             schedulePeriod.originalName != originalPeriodName)) {
-          String periodId = (originalPeriodName as String).slugify();
-
-          String? customName = prefs.getString("$scheduleId.$periodId.name");
-          String newPeriodName;
-          if (customName != null) {
-            newPeriodName = "$customName ($originalPeriodName)";
-          } else {
-            newPeriodName = originalPeriodName;
-          }
+          String? customName = prefs
+              .getString("$scheduleId.${originalPeriodName.slugify()}.name");
+          String newPeriodName = customName != null
+              ? "$customName ($originalPeriodName)"
+              : originalPeriodName;
 
           periods.add(
             Period(
@@ -63,8 +67,7 @@ class Schedule {
   }
 
   List<Period?> daySchedule(String day) {
-    if ((schedule["schedule"] as Map<String, dynamic>).containsKey(day) &&
-        periods.isNotEmpty) {
+    if (periodSchedule.containsKey(day) && periods.isNotEmpty) {
       return (schedule["schedule"][day] as Map<String, dynamic>).keys.map(
         (schedulePeriodName) {
           return periods.firstWhere(
@@ -283,6 +286,141 @@ class Schedule {
         year.substring(year.length - 2) +
         scheduledTime.hour.twoDigits() +
         scheduledTime.minute.twoDigits());
+  }
+
+  Future<void> editPeriodName(String originalName, String newName) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    List<Period> periodsList = periods.toList();
+    int index = periodsList.indexWhere(
+      (period) => period.originalName == originalName,
+    );
+
+    periodsList[index].name = "${newName.trim()} ($originalName)";
+
+    prefs.setString(
+      "$scheduleId.${originalName.slugify()}.name",
+      newName.trim(),
+    );
+    periods = periodsList.toSet();
+  }
+
+  Map<String, String> get _periodNames => periods
+          .where(
+        (period) => period.allowEditing == true,
+      )
+          .fold(
+        {},
+        (previous, period) => {
+          ...previous,
+          period.originalName: period.name.contains(" (")
+              ? period.name.replaceAll(" (${period.originalName})", "")
+              : ""
+        },
+      );
+
+  Future<Map<String, dynamic>> generateExport() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Allowed notifications
+    Map<String, bool> exportNotificationIntervals = {};
+    Map<String, bool> exportNotificationDays = {};
+    Map<String, bool> exportNotificationPeriods = {};
+
+    for (var interval in notificationIntervals) {
+      exportNotificationIntervals[interval.exportId] =
+          (prefs.getBool("$scheduleId.${interval.id}") ?? true);
+    }
+
+    List<String> days = periodSchedule.keys.toList();
+
+    for (var day in notificationDays) {
+      if (days.contains(day.day.substring(0, 3).toUpperCase())) {
+        exportNotificationDays[day.id] =
+            (prefs.getBool("$scheduleId.${day.id}") ?? true);
+      }
+    }
+
+    for (var period in periods) {
+      exportNotificationPeriods[period.originalName] =
+          (prefs.getBool("$scheduleId.${period.id}") ?? true);
+    }
+
+    Map<String, Map<String, bool>> exportNotifications = {
+      "intervals": exportNotificationIntervals,
+      "days": exportNotificationDays,
+      "periods": exportNotificationPeriods
+    };
+
+    return {
+      "hour24": (prefs.getBool('_hour24Enabled') ?? false),
+      "periodNames": _periodNames,
+      "notifications": (prefs.getBool('_notificationsEnabled') ?? true),
+      "allowedNotifications": exportNotifications,
+    };
+  }
+
+  Future<String> importSettings(String importText) async {
+    try {
+      Map<String, dynamic> json = jsonDecode(importText);
+      if (json.containsKey("hour24") &&
+          json.containsKey("periodNames") &&
+          json.containsKey("notifications")) {
+        // TODO: Add check for `periodNames` (uses `CastMap`)
+        if (json["hour24"].runtimeType == bool &&
+            json["notifications"].runtimeType == bool) {
+          List<String> importNames = (json["periodNames"] as LinkedHashMap)
+              .cast<String, String>()
+              .keys
+              .toList();
+
+          if (periods.isEmpty) {
+            for (String day in periodSchedule.keys) {
+              generateDayPeriods(day);
+            }
+          }
+
+          List<String> originalPeriodNames = _periodNames.keys.toList();
+
+          bool difference = importNames
+              .toSet()
+              .difference(originalPeriodNames.toSet())
+              .isEmpty;
+          bool lengthDifference =
+              importNames.length == originalPeriodNames.length;
+
+          if (difference && lengthDifference) {
+            final prefs = await SharedPreferences.getInstance();
+
+            prefs.setBool(
+              '_hour24Enabled',
+              json["hour24"] as bool,
+            );
+
+            prefs.setBool(
+              '_notificationsEnabled',
+              json["notifications"] as bool,
+            );
+
+            for (var importName in (json["periodNames"] as LinkedHashMap)
+                .cast<String, String>()
+                .entries) {
+              editPeriodName(importName.key, importName.value);
+            }
+
+            return "SUCCESS";
+          } else {
+            return "Period names do not match";
+          }
+        } else {
+          return "Keys have incorrect types";
+        }
+      } else {
+        return "Missing required keys in JSON";
+      }
+    } on FormatException catch (_) {
+      return "Invalid JSON";
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import 'package:schedules/extensions/string.dart';
+import 'extensions/string.dart';
 
 class NotificationInterval {
   List<int> array;
@@ -10,6 +10,11 @@ class NotificationInterval {
   });
 
   String get id => name.slugify();
+  String get exportId {
+    List<String> exported = name.split(" ");
+    return exported[0].toLowerCase() + exported[1].toCapitalized();
+  }
+
   Duration get duration => Duration(
         hours: array[0],
         minutes: array[1],

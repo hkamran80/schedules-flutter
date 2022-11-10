@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:schedules/notification_constants.dart';
-import 'package:schedules/utils/schedule.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../notification_constants.dart';
 import '../provider/schedules.dart';
+import '../utils/schedule.dart';
 import '../widgets/toggle_card.dart';
 
 class ScheduleNotificationsSettingsScreen extends StatefulWidget {
   const ScheduleNotificationsSettingsScreen({
     Key? key,
     required this.scheduleId,
-    required this.schedulesData,
-    required this.schedule,
   }) : super(key: key);
 
   static const routeName = "/schedule/notifications";
-
   final String scheduleId;
-  final SchedulesProvider schedulesData;
-  final Schedule schedule;
 
   @override
   State<ScheduleNotificationsSettingsScreen> createState() =>
@@ -35,8 +31,6 @@ class _ScheduleNotificationsSettingsScreenState
   void initState() {
     super.initState();
     _loadNotificationIntervals();
-    _loadNotificationDays();
-    _loadNotificationPeriods();
   }
 
   void _loadNotificationIntervals() async {
@@ -51,12 +45,8 @@ class _ScheduleNotificationsSettingsScreenState
     );
   }
 
-  void _loadNotificationDays() async {
+  void _loadNotificationDays(Iterable<String> days) async {
     final prefs = await SharedPreferences.getInstance();
-    final days = (widget.schedulesData.schedules[widget.scheduleId]["schedule"]
-            as Map<String, dynamic>)
-        .keys
-        .toList();
 
     setState(
       () {
@@ -70,41 +60,8 @@ class _ScheduleNotificationsSettingsScreenState
     );
   }
 
-  void _loadNotificationPeriods() async {
+  void _loadNotificationPeriods(Set<Period> periods) async {
     final prefs = await SharedPreferences.getInstance();
-    Set<Period> periods = {};
-
-    for (var day in widget.schedule.schedule["schedule"].keys) {
-      final Map<dynamic, dynamic> daySchedule =
-          widget.schedule.schedule["schedule"][day];
-
-      for (final periodName in daySchedule.keys) {
-        final period = daySchedule[periodName];
-
-        PeriodTimes times = period is List
-            ? PeriodTimes(period[0], period[1])
-            : PeriodTimes(period["times"][0], period["times"][1]);
-
-        bool allowEditing = true;
-        if (period is List && (periodName as String).contains("Passing (")) {
-          allowEditing = false;
-        } else if (period is! List) {
-          allowEditing = period["allowEditing"];
-        }
-
-        if (periods.every(
-            (schedulePeriod) => schedulePeriod.originalName != periodName)) {
-          periods.add(
-            Period(
-              periodName,
-              periodName,
-              times,
-              allowEditing,
-            ),
-          );
-        }
-      }
-    }
 
     setState(
       () {
@@ -161,6 +118,16 @@ class _ScheduleNotificationsSettingsScreenState
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final schedules = Provider.of<SchedulesProvider>(context);
+    final schedule = schedules.scheduleMap[widget.scheduleId]!;
+
+    if (_notificationDays.isEmpty) {
+      _loadNotificationDays(schedule.periodSchedule.keys);
+    }
+
+    if (_notificationPeriods.isEmpty) {
+      _loadNotificationPeriods(schedule.periods);
+    }
 
     return Material(
       color: backgroundColor,
@@ -169,7 +136,7 @@ class _ScheduleNotificationsSettingsScreenState
           SliverAppBar.medium(
             backgroundColor: backgroundColor,
             title: Text(
-              "${widget.schedulesData.schedules[widget.scheduleId]["shortName"]}: Notifications",
+              "${schedule.shortName}: Notifications",
             ),
           ),
           SliverPadding(
