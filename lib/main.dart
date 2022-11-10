@@ -122,16 +122,8 @@ class SchedulesApp extends StatelessWidget {
               .settings
               .arguments as ScheduleScreenArguments;
 
-          SchedulesProvider schedulesData =
-              Provider.of<SchedulesProvider>(context);
-
           return ImportSettingsScreen(
             scheduleId: args.scheduleId,
-            schedulesData: schedulesData,
-            schedule: Schedule(
-              args.scheduleId,
-              schedulesData.schedules[args.scheduleId],
-            ),
           );
         },
         SettingsScreen.routeName: (context) => const SettingsScreen(),
