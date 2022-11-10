@@ -134,7 +134,7 @@ class SchedulesApp extends StatelessWidget {
             ),
           );
         },
-        SettingsScreen.routeName: (context) => SettingsScreen(),
+        SettingsScreen.routeName: (context) => const SettingsScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
       },
     );
