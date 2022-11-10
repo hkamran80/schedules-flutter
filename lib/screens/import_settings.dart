@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:schedules/notification_constants.dart';
-import 'package:schedules/utils/schedule.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../provider/schedules.dart';
 
