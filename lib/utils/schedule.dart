@@ -21,6 +21,10 @@ class Schedule {
 
   Schedule(this.scheduleId, this.schedule);
 
+  String get name => schedule["name"];
+  String get shortName => schedule["shortName"];
+  String get color => schedule["color"];
+
   Map<String, dynamic> get periodSchedule =>
       schedule["schedule"] as Map<String, dynamic>;
 
