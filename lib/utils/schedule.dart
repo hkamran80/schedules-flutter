@@ -358,7 +358,7 @@ class Schedule {
     };
   }
 
-  Future<bool> importSettings(String importText) async {
+  Future<String> importSettings(String importText) async {
     try {
       Map<String, dynamic> json = jsonDecode(importText);
       if (json.containsKey("hour24") &&
@@ -409,18 +409,18 @@ class Schedule {
               );
             }
 
-            return true;
+            return "SUCCESS";
           } else {
-            throw ValueError("Period names do not match");
+            return "Period names do not match";
           }
         } else {
-          throw TypeError("Keys have incorrect types");
+          return "Keys have incorrect types";
         }
       } else {
-        throw TypeError("Missing required keys in JSON");
+        return "Missing required keys in JSON";
       }
     } on FormatException catch (_) {
-      throw const FormatException("Invalid JSON");
+      return "Invalid JSON";
     }
   }
 }
