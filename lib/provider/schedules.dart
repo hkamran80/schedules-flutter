@@ -8,9 +8,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
+import '../utils/schedule.dart';
 
 class SchedulesProvider with ChangeNotifier {
   Map<dynamic, dynamic> schedules = {};
+  Map<String, Schedule> scheduleMap = {};
   bool loading = true;
   bool isRequestError = false;
 
@@ -40,6 +42,11 @@ class SchedulesProvider with ChangeNotifier {
           schedules = json.decode(
             response.body,
           ) as Map;
+
+          for (String scheduleId in schedules.keys) {
+            scheduleMap[scheduleId] =
+                Schedule(scheduleId, schedules[scheduleId]);
+          }
 
           await _saveSchedules(
             response.body,
@@ -88,6 +95,11 @@ class SchedulesProvider with ChangeNotifier {
           schedules = json.decode(
             schedulesFileContents,
           ) as Map;
+
+          for (String scheduleId in schedules.keys) {
+            scheduleMap[scheduleId] =
+                Schedule(scheduleId, schedules[scheduleId]);
+          }
 
           loading = false;
           isRequestError = false;

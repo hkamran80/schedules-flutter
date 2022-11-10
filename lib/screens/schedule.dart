@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:schedules/screens/import_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,15 +28,11 @@ class ScheduleScreenArguments {
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({
     Key? key,
-    required this.args,
-    required this.schedulesData,
-    required this.schedule,
+    required this.scheduleId,
   }) : super(key: key);
 
   static const routeName = "/schedule";
-  final ScheduleScreenArguments args;
-  final SchedulesProvider schedulesData;
-  final Schedule schedule;
+  final String scheduleId;
 
   @override
   State<ScheduleScreen> createState() => _ScheduleScreenState();
@@ -52,19 +49,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void initState() {
     super.initState();
     _loadHour24();
-
-    setState(
-      () {
-        widget.schedule.generateDayPeriods(
-          DateFormat.E()
-              .format(
-                DateTime.now(),
-              )
-              .toUpperCase(),
-        );
-      },
-    );
-
     _startTimer();
   }
 
@@ -126,9 +110,27 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
+  String get threeLetterDay => DateFormat.E()
+      .format(
+        DateTime.now(),
+      )
+      .toUpperCase();
+
   @override
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final schedules = Provider.of<SchedulesProvider>(context);
+    final schedule = schedules.scheduleMap[widget.scheduleId]!;
+
+    if (schedule.periods.isEmpty) {
+      setState(
+        () {
+          for (String day in schedule.periodSchedule.keys) {
+            schedule.generateDayPeriods(day);
+          }
+        },
+      );
+    }
 
     return Material(
       color: backgroundColor,
@@ -139,29 +141,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             title: Column(
               children: [
                 Text(
-                  widget.schedulesData.schedules[widget.args.scheduleId]
-                      ["shortName"],
+                  schedule.shortName,
                 ),
               ],
             ),
             actions: [
-              if ((widget.schedule.schedule["schedule"] as Map<String, dynamic>)
-                  .containsKey(
-                DateFormat.E()
-                    .format(
-                      DateTime.now(),
-                    )
-                    .toUpperCase(),
+              if (schedule.periodSchedule.containsKey(
+                threeLetterDay,
               ))
                 IconButton(
                   onPressed: () => _showTimetable(
                     context,
-                    widget.schedule.daySchedule(
-                      DateFormat.E()
-                          .format(
-                            DateTime.now(),
-                          )
-                          .toUpperCase(),
+                    schedule.daySchedule(
+                      threeLetterDay,
                     ),
                   ),
                   icon: const Icon(
@@ -214,7 +206,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       context,
                       ScheduleNotificationsSettingsScreen.routeName,
                       arguments: ScheduleScreenArguments(
-                        widget.args.scheduleId,
+                        widget.scheduleId,
                       ),
                     );
                   } else if (value == "periodNames") {
@@ -222,7 +214,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       context,
                       SchedulePeriodNamesSettingsScreen.routeName,
                       arguments: ScheduleScreenArguments(
-                        widget.args.scheduleId,
+                        widget.scheduleId,
                       ),
                     );
                   } else if (value == "importSettings") {
@@ -230,14 +222,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       context,
                       ImportSettingsScreen.routeName,
                       arguments: ScheduleScreenArguments(
-                        widget.args.scheduleId,
+                        widget.scheduleId,
                       ),
                     );
                   } else if (value == "exportSettings") {
                     Clipboard.setData(
                       ClipboardData(
                         text: jsonEncode(
-                          await widget.schedule.generateExport(),
+                          await schedule.generateExport(),
                         ),
                       ),
                     ).then(
@@ -277,14 +269,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    child: widget.schedule.currentPeriodExists
+                    child: schedule.currentPeriodExists
                         ? Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               StackedCard(
-                                header: widget.schedule.currentPeriod!.name,
-                                content: widget.schedule.timeRemaining,
+                                header: schedule.currentPeriod!.name,
+                                content: schedule.timeRemaining,
                               ),
                               const SizedBox(height: 10),
                             ],
@@ -292,19 +284,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         : const SizedBox.shrink(),
                   ),
                   Container(
-                    child: widget.schedule.nextPeriodExists
+                    child: schedule.nextPeriodExists
                         ? StackedCard(
-                            header: widget.schedule.nextPeriod!.name,
-                            content: widget.schedule.nextPeriod!.times.start
-                                .convertTime(
+                            header: schedule.nextPeriod!.name,
+                            content:
+                                schedule.nextPeriod!.times.start.convertTime(
                               _hour24Enabled,
                             ),
                           )
                         : const SizedBox.shrink(),
                   ),
                   Container(
-                    child: !widget.schedule.nextPeriodExists &&
-                            !widget.schedule.currentPeriodExists
+                    child: !schedule.nextPeriodExists &&
+                            !schedule.currentPeriodExists
                         ? Container(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 10,

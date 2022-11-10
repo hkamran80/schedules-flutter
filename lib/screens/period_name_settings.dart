@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:schedules/utils/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,15 +9,11 @@ class SchedulePeriodNamesSettingsScreen extends StatefulWidget {
   const SchedulePeriodNamesSettingsScreen({
     Key? key,
     required this.scheduleId,
-    required this.schedulesData,
-    required this.schedule,
   }) : super(key: key);
 
   static const routeName = "/schedule/periodNames";
 
   final String scheduleId;
-  final SchedulesProvider schedulesData;
-  final Schedule schedule;
 
   @override
   State<SchedulePeriodNamesSettingsScreen> createState() =>
@@ -30,44 +27,10 @@ class _SchedulePeriodNamesSettingsScreenState
   @override
   void initState() {
     super.initState();
-    _loadPeriodNames();
   }
 
-  void _loadPeriodNames() async {
+  void _loadPeriodNames(Set<Period> periods) async {
     final prefs = await SharedPreferences.getInstance();
-    Set<Period> periods = {};
-
-    for (var day in widget.schedule.schedule["schedule"].keys) {
-      final Map<dynamic, dynamic> daySchedule =
-          widget.schedule.schedule["schedule"][day];
-
-      for (final periodName in daySchedule.keys) {
-        final period = daySchedule[periodName];
-
-        PeriodTimes times = period is List
-            ? PeriodTimes(period[0], period[1])
-            : PeriodTimes(period["times"][0], period["times"][1]);
-
-        bool allowEditing = true;
-        if (period is List && (periodName as String).contains("Passing (")) {
-          allowEditing = false;
-        } else if (period is! List) {
-          allowEditing = period["allowEditing"];
-        }
-
-        if (periods.every(
-            (schedulePeriod) => schedulePeriod.originalName != periodName)) {
-          periods.add(
-            Period(
-              periodName,
-              periodName,
-              times,
-              allowEditing,
-            ),
-          );
-        }
-      }
-    }
 
     setState(
       () {
@@ -99,6 +62,12 @@ class _SchedulePeriodNamesSettingsScreenState
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+    final schedules = Provider.of<SchedulesProvider>(context);
+    final schedule = schedules.scheduleMap[widget.scheduleId]!;
+
+    if (_periods.isEmpty) {
+      _loadPeriodNames(schedule.periods);
+    }
 
     return Material(
       color: backgroundColor,
@@ -107,7 +76,7 @@ class _SchedulePeriodNamesSettingsScreenState
           SliverAppBar.medium(
             backgroundColor: backgroundColor,
             title: Text(
-              "${widget.schedulesData.schedules[widget.scheduleId]["shortName"]}: Period Names",
+              "${schedule.shortName}: Period Names",
             ),
           ),
           SliverPadding(
