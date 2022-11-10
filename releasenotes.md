@@ -1,9 +1,18 @@
 # Release Notes
 
-## 0.2.2 (TBD)
+## 1.0.0 (TBD)
 
-- Fix cursor colour
-- Fix notification toggle in settings
+- Fix text selection interface (#16)
+- Enable notification toggle in settings
+- Add network timeout (five seconds)
+- Switch to Lucide Icons (#10)
+- Add a credit
+- Add schedule variant support (#11)
+- Improve period name widget generation with `Builder`
+- Remove the What's New sheet
+- Switch to a single source of truth model
+- Add import/export functionality (#6)
+- Load new period names immediately (#9)
 
 ## 0.2.1 (August 20, 2022)
 
