@@ -121,16 +121,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final schedules = Provider.of<SchedulesProvider>(context);
     final schedule = schedules.scheduleMap[widget.scheduleId]!;
+
     if (schedule.periods.isEmpty) {
       setState(
         () {
-          schedule.generateDayPeriods(
-            DateFormat.E()
-                .format(
-                  DateTime.now(),
-                )
-                .toUpperCase(),
-          );
+          for (String day in schedule.periodSchedule.keys) {
+            schedule.generateDayPeriods(day);
+          }
         },
       );
     }
