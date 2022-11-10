@@ -121,7 +121,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final schedules = Provider.of<SchedulesProvider>(context);
     final schedule = schedules.scheduleMap[widget.scheduleId]!;
-    if (schedule.periodSchedule.keys.isEmpty) {
+    if (schedule.periods.isEmpty) {
       setState(
         () {
           schedule.generateDayPeriods(
@@ -290,8 +290,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     child: schedule.nextPeriodExists
                         ? StackedCard(
                             header: schedule.nextPeriod!.name,
-                            content: schedule.nextPeriod!.times.start
-                                .convertTime(
+                            content:
+                                schedule.nextPeriod!.times.start.convertTime(
                               _hour24Enabled,
                             ),
                           )
