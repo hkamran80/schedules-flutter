@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:schedules/screens/import_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/color.dart';
@@ -189,6 +190,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     ),
                   ),
                   PopupMenuItem(
+                    value: "importSettings",
+                    child: Text(
+                      "Import Settings",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem(
                     value: "exportSettings",
                     child: Text(
                       "Export Settings",
@@ -211,6 +221,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     Navigator.pushNamed(
                       context,
                       SchedulePeriodNamesSettingsScreen.routeName,
+                      arguments: ScheduleScreenArguments(
+                        widget.args.scheduleId,
+                      ),
+                    );
+                  } else if (value == "importSettings") {
+                    Navigator.pushNamed(
+                      context,
+                      ImportSettingsScreen.routeName,
                       arguments: ScheduleScreenArguments(
                         widget.args.scheduleId,
                       ),
