@@ -352,20 +352,6 @@ class Schedule {
       "periods": exportNotificationPeriods
     };
 
-    Map<String, String> periodNames = periods
-        .where(
-      (period) => period.allowEditing == true,
-    )
-        .fold(
-      {},
-      (previous, period) => {
-        ...previous,
-        period.originalName: period.name.contains(" (")
-            ? period.name.replaceAll(" (${period.originalName})", "")
-            : ""
-      },
-    );
-
     return {
       "hour24": (prefs.getBool('_hour24Enabled') ?? false),
       "periodNames": _periodNames,
