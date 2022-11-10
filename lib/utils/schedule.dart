@@ -1,6 +1,10 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:schedules/extensions/errors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/string.dart';
@@ -285,22 +289,22 @@ class Schedule {
         scheduledTime.minute.twoDigits());
   }
 
+  Map<String, String> get _periodNames => periods
+          .where(
+        (period) => period.allowEditing == true,
+      )
+          .fold(
+        {},
+        (previous, period) => {
+          ...previous,
+          period.originalName: period.name.contains(" (")
+              ? period.name.replaceAll(" (${period.originalName})", "")
+              : ""
+        },
+      );
+
   Future<Map<String, dynamic>> generateExport() async {
     final prefs = await SharedPreferences.getInstance();
-
-    Map<String, String> exportPeriods = periods
-        .where(
-      (period) => period.allowEditing == true,
-    )
-        .fold(
-      {},
-      (previous, period) => {
-        ...previous,
-        period.originalName: period.name.contains(" (")
-            ? period.name.replaceAll(" (${period.originalName})", "")
-            : ""
-      },
-    );
 
     // Allowed notifications
     Map<String, bool> exportNotificationIntervals = {};
@@ -333,12 +337,138 @@ class Schedule {
       "periods": exportNotificationPeriods
     };
 
+    Map<String, String> periodNames = periods
+        .where(
+      (period) => period.allowEditing == true,
+    )
+        .fold(
+      {},
+      (previous, period) => {
+        ...previous,
+        period.originalName: period.name.contains(" (")
+            ? period.name.replaceAll(" (${period.originalName})", "")
+            : ""
+      },
+    );
+
     return {
       "hour24": (prefs.getBool('_hour24Enabled') ?? false),
-      "periodNames": exportPeriods,
+      "periodNames": _periodNames,
       "notifications": (prefs.getBool('_notificationsEnabled') ?? true),
       "allowedNotifications": exportNotifications,
     };
+  }
+
+  Future<bool> importSettings(String importText) async {
+    try {
+      Map<String, dynamic> json = jsonDecode(importText);
+      if (json.containsKey("hour24") &&
+          json.containsKey("periodNames") &&
+          json.containsKey("notifications")) {
+        Map<String, String> periodNames =
+            ((json["periodNames"] as LinkedHashMap).cast<String, String>());
+
+        // TODO: Add check for `periodNames` (uses `CastMap`)
+        if (json["hour24"].runtimeType == bool &&
+            json["notifications"].runtimeType == bool) {
+          List<String> importNames = (json["periodNames"] as LinkedHashMap)
+              .cast<String, String>()
+              .keys
+              .toList();
+
+          if (periods.isEmpty) {
+            print("Generating periods...");
+            for (String day
+                in (schedule["schedule"] as Map<String, dynamic>).keys) {
+              generateDayPeriods(day);
+              print(periods.length);
+            }
+            print("Generated periods!");
+            print(_periodNames);
+            print(periods);
+          }
+
+          Map<String, String> generatedPeriodNames = periods
+              .where(
+            (period) => period.allowEditing == true,
+          )
+              .fold(
+            {},
+            (previous, period) => {
+              ...previous,
+              period.originalName: period.name.contains(" (")
+                  ? period.name.replaceAll(" (${period.originalName})", "")
+                  : ""
+            },
+          );
+
+          List<String> originalPeriodNames = generatedPeriodNames.keys.toList();
+
+          bool difference = importNames
+              .toSet()
+              .difference(originalPeriodNames.toSet())
+              .isEmpty;
+          bool lengthDifference =
+              importNames.length == originalPeriodNames.length;
+
+          print("S");
+          print(scheduleId);
+          print(schedule);
+          print("PN");
+          print(periods);
+          print(periods.where((period) => period.allowEditing == true));
+          print(
+            periods
+                .where((period) => period.allowEditing == true)
+                .map((period) => period.originalName),
+          );
+
+          print("PNC");
+          print(
+            importNames.toSet().difference(originalPeriodNames.toSet()),
+          );
+          print(importNames);
+          print(originalPeriodNames);
+          print(_periodNames);
+          print(_periodNames.keys);
+          print(_periodNames.keys.toList());
+          print(difference);
+
+          if (difference && lengthDifference) {
+            final prefs = await SharedPreferences.getInstance();
+
+            prefs.setBool(
+              '_hour24Enabled',
+              json["hour24"] as bool,
+            );
+
+            prefs.setBool(
+              '_notificationsEnabled',
+              json["notifications"] as bool,
+            );
+
+            for (var importName in (json["periodNames"] as LinkedHashMap)
+                .cast<String, String>()
+                .entries) {
+              prefs.setString(
+                "$scheduleId.${importName.key.slugify()}.name",
+                importName.value.trim(),
+              );
+            }
+
+            return true;
+          } else {
+            throw ValueError("Period names do not match");
+          }
+        } else {
+          throw TypeError("Keys have incorrect types");
+        }
+      } else {
+        throw TypeError("Missing required keys in JSON");
+      }
+    } on FormatException catch (_) {
+      throw const FormatException("Invalid JSON");
+    }
   }
 }
 
