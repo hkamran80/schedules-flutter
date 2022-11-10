@@ -94,7 +94,7 @@ class SchedulesApp extends StatelessWidget {
           ScheduleScreenArguments args = ModalRoute.of(context)!
               .settings
               .arguments as ScheduleScreenArguments;
-              
+
           return ScheduleScreen(
             scheduleId: args.scheduleId,
           );
@@ -104,16 +104,8 @@ class SchedulesApp extends StatelessWidget {
               .settings
               .arguments as ScheduleScreenArguments;
 
-          SchedulesProvider schedulesData =
-              Provider.of<SchedulesProvider>(context);
-
           return ScheduleNotificationsSettingsScreen(
             scheduleId: args.scheduleId,
-            schedulesData: schedulesData,
-            schedule: Schedule(
-              args.scheduleId,
-              schedulesData.schedules[args.scheduleId],
-            ),
           );
         },
         SchedulePeriodNamesSettingsScreen.routeName: (context) {
