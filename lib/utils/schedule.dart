@@ -289,6 +289,23 @@ class Schedule {
         scheduledTime.minute.twoDigits());
   }
 
+  Future<void> editPeriodName(String originalName, String newName) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    List<Period> periodsList = periods.toList();
+    int index = periodsList.indexWhere(
+      (period) => period.originalName == originalName,
+    );
+
+    periodsList[index].name = "${newName.trim()} ($originalName)";
+
+    prefs.setString(
+      "$scheduleId.${originalName.slugify()}.name",
+      newName.trim(),
+    );
+    periods = periodsList.toSet();
+  }
+
   Map<String, String> get _periodNames => periods
           .where(
         (period) => period.allowEditing == true,
@@ -403,10 +420,7 @@ class Schedule {
             for (var importName in (json["periodNames"] as LinkedHashMap)
                 .cast<String, String>()
                 .entries) {
-              prefs.setString(
-                "$scheduleId.${importName.key.slugify()}.name",
-                importName.value.trim(),
-              );
+              editPeriodName(importName.key, importName.value);
             }
 
             return "SUCCESS";
