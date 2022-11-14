@@ -138,12 +138,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         slivers: [
           SliverAppBar.medium(
             backgroundColor: backgroundColor,
-            title: Column(
-              children: [
-                Text(
-                  schedule.shortName,
-                ),
-              ],
+            title: Text(
+              schedule.shortName,
             ),
             actions: [
               if (schedule.periodSchedule.containsKey(

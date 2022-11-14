@@ -94,6 +94,7 @@ class SchedulesApp extends StatelessWidget {
       routes: {
         HomeScreen.routeName: (context) => const HomeScreen(),
         ScheduleScreen.routeName: (context) {
+          // TODO: Create function to extract schedule ID without needing a function body
           ScheduleScreenArguments args = ModalRoute.of(context)!
               .settings
               .arguments as ScheduleScreenArguments;
