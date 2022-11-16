@@ -46,6 +46,15 @@ class SchedulesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dynamic generateScreenWithId(context, dynamic screen) {
+      ScheduleScreenArguments args =
+          ModalRoute.of(context)!.settings.arguments as ScheduleScreenArguments;
+
+      return screen(
+        scheduleId: args.scheduleId,
+      );
+    }
+
     return MaterialApp(
       title: 'Schedules',
       theme: ThemeData(
@@ -93,43 +102,24 @@ class SchedulesApp extends StatelessWidget {
       initialRoute: HomeScreen.routeName,
       routes: {
         HomeScreen.routeName: (context) => const HomeScreen(),
-        ScheduleScreen.routeName: (context) {
-          // TODO: Create function to extract schedule ID without needing a function body
-          ScheduleScreenArguments args = ModalRoute.of(context)!
-              .settings
-              .arguments as ScheduleScreenArguments;
-
-          return ScheduleScreen(
-            scheduleId: args.scheduleId,
-          );
-        },
-        ScheduleNotificationsSettingsScreen.routeName: (context) {
-          ScheduleScreenArguments args = ModalRoute.of(context)!
-              .settings
-              .arguments as ScheduleScreenArguments;
-
-          return ScheduleNotificationsSettingsScreen(
-            scheduleId: args.scheduleId,
-          );
-        },
-        SchedulePeriodNamesSettingsScreen.routeName: (context) {
-          ScheduleScreenArguments args = ModalRoute.of(context)!
-              .settings
-              .arguments as ScheduleScreenArguments;
-
-          return SchedulePeriodNamesSettingsScreen(
-            scheduleId: args.scheduleId,
-          );
-        },
-        ImportSettingsScreen.routeName: (context) {
-          ScheduleScreenArguments args = ModalRoute.of(context)!
-              .settings
-              .arguments as ScheduleScreenArguments;
-
-          return ImportSettingsScreen(
-            scheduleId: args.scheduleId,
-          );
-        },
+        ScheduleScreen.routeName: (context) => generateScreenWithId(
+              context,
+              ScheduleScreen,
+            ),
+        ScheduleNotificationsSettingsScreen.routeName: (context) =>
+            generateScreenWithId(
+              context,
+              ScheduleNotificationsSettingsScreen,
+            ),
+        SchedulePeriodNamesSettingsScreen.routeName: (context) =>
+            generateScreenWithId(
+              context,
+              SchedulePeriodNamesSettingsScreen,
+            ),
+        ImportSettingsScreen.routeName: (context) => generateScreenWithId(
+              context,
+              ImportSettingsScreen,
+            ),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
       },
