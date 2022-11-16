@@ -4,6 +4,8 @@ const schedulesVersion = "latest";
 Uri schedulesLink =
     Uri.parse("https://raw.unisontech.org/schedules/$schedulesVersion");
 
+Uri requestLink = Uri.parse("https://go.unisontech.org/schreq");
+
 Uri repositoryLink =
     Uri.parse("https://github.com/hkamran80/schedules-flutter");
 Uri newIssueLink =
