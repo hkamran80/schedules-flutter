@@ -172,6 +172,10 @@ class _AboutScreenState extends State<AboutScreen> {
                     ),
                     onTap: () => _launchUrl(privacyPolicyLink),
                   ),
+
+                  const SizedBox(
+                    height: 25,
+                  ),
                 ],
               ),
             ),
