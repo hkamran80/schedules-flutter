@@ -127,9 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: backgroundColor,
             title: const Text(
               "Schedules",
-              style: TextStyle(
-                fontSize: 40.0,
-              ),
             ),
             actions: [
               IconButton(
