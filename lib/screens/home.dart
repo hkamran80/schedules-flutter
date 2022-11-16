@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:schedules/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../extensions/color.dart';
 import '../provider/schedules.dart';
@@ -26,6 +28,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String _defaultSchedule = "";
   bool _switched = false;
+
+  void _launchUrl(Uri uri) async {
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch $uri';
+    }
+  }
 
   @override
   void initState() {
@@ -157,178 +168,224 @@ class _HomeScreenState extends State<HomeScreen> {
                 : schedulesData.schedules.isNotEmpty
                     ? SliverList(
                         delegate: SliverChildListDelegate(
-                          schedulesList.entries
-                              .map(
-                                (schedule) => Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: HexColor.fromHex(
-                                                        schedule.value.color)
-                                                    .computeLuminance() >
-                                                0.5
-                                            ? Colors.black
-                                            : Colors.white,
-                                        alignment: Alignment.centerLeft,
-                                        backgroundColor: HexColor.fromHex(
-                                          schedule.value.color,
+                          [
+                            ...schedulesList.entries
+                                .map(
+                                  (schedule) => Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: HexColor.fromHex(
+                                                          schedule.value.color)
+                                                      .computeLuminance() >
+                                                  0.5
+                                              ? Colors.black
+                                              : Colors.white,
+                                          alignment: Alignment.centerLeft,
+                                          backgroundColor: HexColor.fromHex(
+                                            schedule.value.color,
+                                          ),
                                         ),
-                                      ),
-                                      onPressed: () {
-                                        if (schedule.value.type == Schedule) {
-                                          Navigator.pushNamed(
-                                            context,
-                                            ScheduleScreen.routeName,
-                                            arguments: ScheduleScreenArguments(
-                                              schedule.key,
-                                            ),
-                                          );
-                                        } else {
-                                          showModalBottomSheet(
-                                            elevation: 10,
-                                            backgroundColor: Theme.of(context)
-                                                .scaffoldBackgroundColor,
-                                            context: context,
-                                            builder: (ctx) => Container(
-                                              width:
-                                                  MediaQuery.of(ctx).size.width,
-                                              height: MediaQuery.of(ctx)
-                                                      .size
-                                                      .height *
-                                                  0.40,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(22),
-                                                color:
-                                                    Theme.of(ctx).brightness ==
-                                                            Brightness.dark
-                                                        ? Colors.grey.shade900
-                                                        : Colors.grey.shade100,
+                                        onPressed: () {
+                                          if (schedule.value.type == Schedule) {
+                                            Navigator.pushNamed(
+                                              context,
+                                              ScheduleScreen.routeName,
+                                              arguments:
+                                                  ScheduleScreenArguments(
+                                                schedule.key,
                                               ),
-                                              alignment: Alignment.center,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(25.0),
-                                                child: ListView(
-                                                  children: [
-                                                    Text(
-                                                      schedule.value.name,
-                                                      style: const TextStyle(
-                                                        fontSize: 20.0,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                            );
+                                          } else {
+                                            showModalBottomSheet(
+                                              elevation: 10,
+                                              backgroundColor: Theme.of(context)
+                                                  .scaffoldBackgroundColor,
+                                              context: context,
+                                              builder: (ctx) => Container(
+                                                width: MediaQuery.of(ctx)
+                                                    .size
+                                                    .width,
+                                                height: MediaQuery.of(ctx)
+                                                        .size
+                                                        .height *
+                                                    0.40,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(22),
+                                                  color: Theme.of(ctx)
+                                                              .brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.grey.shade900
+                                                      : Colors.grey.shade100,
+                                                ),
+                                                alignment: Alignment.center,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      25.0),
+                                                  child: ListView(
+                                                    children: [
+                                                      Text(
+                                                        schedule.value.name,
+                                                        style: const TextStyle(
+                                                          fontSize: 20.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
-                                                    ...schedule
-                                                        .value.variant!.variants
-                                                        .map(
-                                                          (variant) => Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .stretch,
-                                                            children: [
-                                                              ElevatedButton(
-                                                                style: ElevatedButton
-                                                                    .styleFrom(
-                                                                  foregroundColor: HexColor.fromHex(schedule.value.color)
-                                                                              .computeLuminance() >
-                                                                          0.5
-                                                                      ? Colors
-                                                                          .black
-                                                                      : Colors
-                                                                          .white,
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  backgroundColor:
-                                                                      HexColor
-                                                                          .fromHex(
-                                                                    schedule
-                                                                        .value
-                                                                        .color,
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      ...schedule.value.variant!
+                                                          .variants
+                                                          .map(
+                                                            (variant) => Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .stretch,
+                                                              children: [
+                                                                ElevatedButton(
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    foregroundColor: HexColor.fromHex(schedule.value.color)
+                                                                                .computeLuminance() >
+                                                                            0.5
+                                                                        ? Colors
+                                                                            .black
+                                                                        : Colors
+                                                                            .white,
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .centerLeft,
+                                                                    backgroundColor:
+                                                                        HexColor
+                                                                            .fromHex(
+                                                                      schedule
+                                                                          .value
+                                                                          .color,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                onPressed: () {
-                                                                  Navigator
-                                                                      .pushNamed(
-                                                                    context,
-                                                                    ScheduleScreen
-                                                                        .routeName,
-                                                                    arguments:
-                                                                        ScheduleScreenArguments(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator
+                                                                        .pushNamed(
+                                                                      context,
+                                                                      ScheduleScreen
+                                                                          .routeName,
+                                                                      arguments:
+                                                                          ScheduleScreenArguments(
+                                                                        variant
+                                                                            .id,
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .fromLTRB(
+                                                                      0,
+                                                                      15,
+                                                                      0,
+                                                                      15,
+                                                                    ),
+                                                                    child: Text(
                                                                       variant
-                                                                          .id,
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .fromLTRB(
-                                                                    0,
-                                                                    15,
-                                                                    0,
-                                                                    15,
-                                                                  ),
-                                                                  child: Text(
-                                                                    variant
-                                                                        .name,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontSize:
-                                                                          16.0,
+                                                                          .name,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            16.0,
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 15,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )
-                                                        .toList()
-                                                  ],
+                                                                const SizedBox(
+                                                                  height: 15,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                          .toList()
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
+                                            );
+                                          }
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                            0,
+                                            15,
+                                            0,
+                                            15,
+                                          ),
+                                          child: Text(
+                                            schedule.value.name,
+                                            style: const TextStyle(
+                                              fontSize: 16.0,
                                             ),
-                                          );
-                                        }
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                          0,
-                                          15,
-                                          0,
-                                          15,
-                                        ),
-                                        child: Text(
-                                          schedule.value.name,
-                                          style: const TextStyle(
-                                            fontSize: 16.0,
                                           ),
                                         ),
                                       ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                                .toList(),
+                            const Divider(
+                              thickness: 4.0,
+                              indent: 8.0,
+                              endIndent: 8.0,
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    alignment: Alignment.centerLeft,
+                                    backgroundColor:
+                                        HexColor.fromHex("#BE154D"),
+                                  ),
+                                  onPressed: () => _launchUrl(requestLink),
+                                  child: const Padding(
+                                    padding: EdgeInsets.fromLTRB(
+                                      0,
+                                      15,
+                                      0,
+                                      15,
                                     ),
-                                    const SizedBox(
-                                      height: 15,
+                                    child: Text(
+                                      "Missing your school?",
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                      ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              )
-                              .toList(),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       )
                     : const SliverToBoxAdapter(
