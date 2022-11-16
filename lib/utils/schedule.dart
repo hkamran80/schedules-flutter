@@ -66,7 +66,7 @@ class Schedule {
     }
   }
 
-  List<Period?> daySchedule(String day) {
+  List<Period> daySchedule(String day) {
     if (periodSchedule.containsKey(day) && periods.isNotEmpty) {
       return (schedule["schedule"][day] as Map<String, dynamic>).keys.map(
         (schedulePeriodName) {
@@ -79,6 +79,14 @@ class Schedule {
 
     return [];
   }
+
+  List<Period> get daySchedulePeriods => daySchedule(
+        DateFormat.E()
+            .format(
+              DateTime.now(),
+            )
+            .toUpperCase(),
+      );
 
   Period? get currentPeriod {
     if (periods.isNotEmpty) {
@@ -94,7 +102,7 @@ class Schedule {
       );
 
       try {
-        return periods.firstWhere(
+        return daySchedulePeriods.firstWhere(
           (schedulePeriod) {
             if (int.parse(schedulePeriod.times.start.replaceAll("-", "")) <=
                     currentTime &&
@@ -157,19 +165,12 @@ class Schedule {
 
   Period? get nextPeriod {
     if (currentPeriodExists) {
-      List<Period?> daySchedulePeriods = daySchedule(
-        DateFormat.E()
-            .format(
-              DateTime.now(),
-            )
-            .toUpperCase(),
-      );
-
       return daySchedulePeriods.length - 1 ==
-              daySchedulePeriods.indexOf(currentPeriod)
+              daySchedulePeriods.indexOf(currentPeriod!)
           ? null
-          : daySchedulePeriods
-              .elementAt(daySchedulePeriods.indexOf(currentPeriod) + 1);
+          : daySchedulePeriods.elementAt(
+              daySchedulePeriods.indexOf(currentPeriod!) + 1,
+            );
     }
 
     return null;
