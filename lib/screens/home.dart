@@ -29,10 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String _defaultSchedule = "";
   bool _switched = false;
 
-  void _launchUrl(Uri uri) async {
+  void _launchUrl(Uri uri, {LaunchMode? launchMode}) async {
     if (!await launchUrl(
       uri,
-      mode: LaunchMode.externalApplication,
+      mode: launchMode ?? LaunchMode.externalApplication,
     )) {
       throw 'Could not launch $uri';
     }
@@ -361,7 +361,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     backgroundColor:
                                         HexColor.fromHex("#BE154D"),
                                   ),
-                                  onPressed: () => _launchUrl(requestLink),
+                                  onPressed: () => _launchUrl(
+                                    requestLink,
+                                    launchMode: LaunchMode.inAppWebView,
+                                  ),
                                   child: const Padding(
                                     padding: EdgeInsets.fromLTRB(
                                       0,
