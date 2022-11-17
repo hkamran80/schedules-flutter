@@ -1,6 +1,19 @@
 # Release Notes
 
-## 1.0.0 (TBD)
+## 1.0.1
+
+**Pending release**
+
+- Fix schedule periods bug (periods would be incorrect for that day) (#31)
+- Add schedule request form (#25)
+- Changed feedback repository issues link to form (#5)
+- Add a link to the Discord server (#29)
+- Add padding to the bottom of the home and about screens
+- Reduce text size for the header on the home screen (#26)
+
+## 1.0.0
+
+**Released to iOS on November 14, Android on November 15, 2022**
 
 - Fix text selection interface (#16)
 - Enable notification toggle in settings
