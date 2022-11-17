@@ -67,14 +67,30 @@ class Schedule {
   }
 
   List<Period> daySchedule(String day) {
-    if (periodSchedule.containsKey(day) && periods.isNotEmpty) {
-      return (schedule["schedule"][day] as Map<String, dynamic>).keys.map(
-        (schedulePeriodName) {
-          return periods.firstWhere(
-            (period) => period.originalName == schedulePeriodName,
-          );
-        },
-      ).toList();
+    if (periodSchedule.containsKey(day)) {
+      final Map<dynamic, dynamic> daySchedule = schedule["schedule"][day];
+      List<Period> dayPeriods = [];
+      for (String originalPeriodName in daySchedule.keys) {
+        final period = daySchedule[originalPeriodName];
+
+        PeriodTimes times = period is List
+            ? PeriodTimes(period[0], period[1])
+            : PeriodTimes(period["times"][0], period["times"][1]);
+
+        Period existingPeriod = periods.firstWhere(
+          (period) => period.originalName == originalPeriodName,
+        );
+
+        dayPeriods.add(
+          Period(
+            existingPeriod.name,
+            originalPeriodName,
+            times,
+            existingPeriod.allowEditing,
+          ),
+        );
+      }
+      return dayPeriods;
     }
 
     return [];
