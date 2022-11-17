@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constants.dart';
@@ -17,10 +18,10 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
-  void _launchUrl(Uri uri) async {
+  void _launchUrl(Uri uri, {LaunchMode? launchMode}) async {
     if (!await launchUrl(
       uri,
-      mode: LaunchMode.externalApplication,
+      mode: launchMode ?? LaunchMode.externalApplication,
     )) {
       throw 'Could not launch $uri';
     }
@@ -93,7 +94,16 @@ class _AboutScreenState extends State<AboutScreen> {
                       title: "Feedback",
                       subtitle: "Report a bug or request a feature",
                     ),
-                    onTap: () => _launchUrl(newIssueLink),
+                    onTap: () => _launchUrl(feedbackLink, launchMode: LaunchMode.inAppWebView),
+                  ),
+                  InkWell(
+                    child: const AboutCard(
+                      icon: SimpleIcons.discord,
+                      title: "Discord",
+                      subtitle:
+                          "Join the Discord server, get quick support, and join a community",
+                    ),
+                    onTap: () => _launchUrl(discordLink),
                   ),
                   InkWell(
                     child: const AboutCard(
