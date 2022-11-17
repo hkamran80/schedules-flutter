@@ -93,7 +93,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       title: "Feedback",
                       subtitle: "Report a bug or request a feature",
                     ),
-                    onTap: () => _launchUrl(newIssueLink),
+                    onTap: () => _launchUrl(feedbackLink),
                   ),
                   InkWell(
                     child: const AboutCard(
