@@ -1,6 +1,6 @@
 buildscript {
     ext.kotlin_version = '1.6.10'
-    ext.ndkVersion = '25.0.8775105'
+    ext.ndkVersion = '25.1.8937393'
     repositories {
         google()
         mavenCentral()
