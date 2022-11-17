@@ -46,13 +46,11 @@ class SchedulesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    dynamic generateScreenWithId(context, dynamic screen) {
+    String generateScreenWithId(BuildContext context) {
       ScheduleScreenArguments args =
           ModalRoute.of(context)!.settings.arguments as ScheduleScreenArguments;
 
-      return screen(
-        scheduleId: args.scheduleId,
-      );
+      return args.scheduleId;
     }
 
     return MaterialApp(
@@ -102,23 +100,19 @@ class SchedulesApp extends StatelessWidget {
       initialRoute: HomeScreen.routeName,
       routes: {
         HomeScreen.routeName: (context) => const HomeScreen(),
-        ScheduleScreen.routeName: (context) => generateScreenWithId(
-              context,
-              ScheduleScreen,
+        ScheduleScreen.routeName: (context) => ScheduleScreen(
+              scheduleId: generateScreenWithId(context),
             ),
         ScheduleNotificationsSettingsScreen.routeName: (context) =>
-            generateScreenWithId(
-              context,
-              ScheduleNotificationsSettingsScreen,
+            ScheduleNotificationsSettingsScreen(
+              scheduleId: generateScreenWithId(context),
             ),
         SchedulePeriodNamesSettingsScreen.routeName: (context) =>
-            generateScreenWithId(
-              context,
-              SchedulePeriodNamesSettingsScreen,
+            SchedulePeriodNamesSettingsScreen(
+              scheduleId: generateScreenWithId(context),
             ),
-        ImportSettingsScreen.routeName: (context) => generateScreenWithId(
-              context,
-              ImportSettingsScreen,
+        ImportSettingsScreen.routeName: (context) => ImportSettingsScreen(
+              scheduleId: generateScreenWithId(context),
             ),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         AboutScreen.routeName: (context) => const AboutScreen(),
