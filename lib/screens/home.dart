@@ -268,40 +268,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(
                               height: 15,
                             ),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    alignment: Alignment.centerLeft,
-                                    backgroundColor:
-                                        HexColor.fromHex("#BE154D"),
-                                  ),
-                                  onPressed: () => _launchUrl(
-                                    requestLink,
-                                    launchMode: LaunchMode.inAppWebView,
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                      0,
-                                      15,
-                                      0,
-                                      15,
-                                    ),
-                                    child: Text(
-                                      "Missing your school?",
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                              ],
+                            ScheduleCard(
+                              name: "Missing your school?",
+                              backgroundColor: HexColor.fromHex("#BE154D"),
+                              onPressed: () => _launchUrl(
+                                requestLink,
+                                launchMode: LaunchMode.inAppWebView,
+                              ),
                             ),
                             const SizedBox(
                               height: 25,
