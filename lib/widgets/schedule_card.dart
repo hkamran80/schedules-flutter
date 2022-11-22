@@ -4,11 +4,13 @@ class ScheduleCard extends StatelessWidget {
   const ScheduleCard({
     Key? key,
     required this.name,
+    this.location,
     required this.backgroundColor,
     required this.onPressed,
   }) : super(key: key);
 
   final String name;
+  final String? location;
   final Color backgroundColor;
   final VoidCallback onPressed;
 
@@ -34,12 +36,31 @@ class ScheduleCard extends StatelessWidget {
               0,
               15,
             ),
-            child: Text(
-              name,
-              style: const TextStyle(
-                fontSize: 16.0,
-              ),
-            ),
+            child: location == null
+                ? Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      Text(
+                        location!,
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                        ),
+                      )
+                    ],
+                  ),
           ),
         ),
         const SizedBox(
