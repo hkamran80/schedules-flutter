@@ -40,6 +40,9 @@ class VariantOrSchedule {
 
   String get color =>
       type == Schedule ? schedule!.schedule["color"] : variant!.color;
+
+  String get comparableName =>
+      name.toLowerCase().replaceFirst("a ", "").replaceFirst("the", "").trim();
 }
 
 Map<String, List<String>> generateVariants(Iterable<String> scheduleIds) {
