@@ -183,11 +183,13 @@ class Schedule {
 
   Period? get nextPeriod {
     if (currentPeriodExists) {
-      return daySchedulePeriods.length - 1 ==
-              daySchedulePeriods.indexOf(currentPeriod!)
+      int currentPeriodIndex = daySchedulePeriods.indexWhere(
+          (period) => currentPeriod!.originalName == period.originalName);
+          
+      return daySchedulePeriods.length - 1 == currentPeriodIndex
           ? null
           : daySchedulePeriods.elementAt(
-              daySchedulePeriods.indexOf(currentPeriod!) + 1,
+              currentPeriodIndex + 1,
             );
     }
 
