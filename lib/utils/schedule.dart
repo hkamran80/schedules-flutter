@@ -23,6 +23,8 @@ class Schedule {
   String get name => schedule["name"];
   String get shortName => schedule["shortName"];
   String get color => schedule["color"];
+  String get timezone => schedule["timezone"];
+  String get location => schedule["location"];
 
   Map<String, dynamic> get periodSchedule =>
       schedule["schedule"] as Map<String, dynamic>;

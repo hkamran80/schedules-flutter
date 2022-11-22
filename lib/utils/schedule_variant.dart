@@ -5,11 +5,15 @@ import 'schedule.dart';
 class ScheduleVariant {
   String name;
   String color;
+  String timezone;
+  String location;
   List<ScheduleVariantItem> variants;
 
   ScheduleVariant({
     required this.name,
     required this.color,
+    required this.timezone,
+    required this.location,
     required this.variants,
   });
 }
@@ -35,11 +39,15 @@ class VariantOrSchedule {
           'One of the parameters must be provided',
         );
 
-  String get name =>
-      type == Schedule ? schedule!.schedule["name"] : variant!.name;
+  String get name => type == Schedule ? schedule!.name : variant!.name;
 
-  String get color =>
-      type == Schedule ? schedule!.schedule["color"] : variant!.color;
+  String get color => type == Schedule ? schedule!.color : variant!.color;
+
+  String get timezone =>
+      type == Schedule ? schedule!.timezone : variant!.timezone;
+
+  String get location =>
+      type == Schedule ? schedule!.location : variant!.location;
 
   String get comparableName =>
       name.toLowerCase().replaceFirst("a ", "").replaceFirst("the", "").trim();
@@ -127,6 +135,8 @@ Map<String, VariantOrSchedule> generateScheduleListWithVariants(
                 name: schedules[variants[id]!.first]["name"]
                     .replaceAll(RegExp(r"\s\(.*\)"), ""),
                 color: schedules[variants[id]!.first]["color"],
+                timezone: schedules[variants[id]!.first]["timezone"],
+                location: schedules[variants[id]!.first]["location"],
                 variants: variants[id]!
                     .map(
                       (id) => ScheduleVariantItem(
