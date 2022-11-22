@@ -149,7 +149,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   onPressed: () => _showTimetable(
                     context,
                     schedule.daySchedule(
-                      threeLetterDay,
+                      schedule.override == null
+                          ? threeLetterDay
+                          : schedule.override!,
                     ),
                   ),
                   icon: const Icon(
