@@ -310,7 +310,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                 ),
                                 SizedBox(height: 10),
                                 Text(
-                                  "The current schedule does not have any periods listed for the current time",
+                                  "This schedule does not have any periods listed for the current time",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 18,
