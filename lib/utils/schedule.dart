@@ -100,11 +100,13 @@ class Schedule {
   }
 
   List<Period> get daySchedulePeriods => daySchedule(
-        DateFormat.E()
-            .format(
-              DateTime.now(),
-            )
-            .toUpperCase(),
+        override == null
+            ? DateFormat.E()
+                .format(
+                  DateTime.now(),
+                )
+                .toUpperCase()
+            : override!,
       );
 
   Period? get currentPeriod {
@@ -213,7 +215,21 @@ class Schedule {
     return offDays;
   }
 
-  OffDay? get activeOffDay => offDays.firstWhere((offDay) => offDay.inEffect);
+  OffDay? get activeOffDay =>
+      offDays.where((offDay) => offDay.inEffect).firstOrNull;
+
+  String? get override {
+    Function eq = const ListEquality().equals;
+
+    for (MapEntry override in schedule["overrides"].entries) {
+      if (eq(
+        override.key.split("-").toList().map(int.parse).toList(),
+        DateTime.now().ymd(),
+      )) {
+        return override.value;
+      }
+    }
+  }
 
   bool get currentPeriodExists =>
       currentPeriod.runtimeType.toString().toLowerCase() != "null";
