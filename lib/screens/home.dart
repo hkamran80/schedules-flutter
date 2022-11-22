@@ -177,6 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .map(
                                   (schedule) => ScheduleCard(
                                     name: schedule.value.name,
+                                    location: schedule.value.location,
                                     backgroundColor:
                                         HexColor.fromHex(schedule.value.color),
                                     onPressed: () {
