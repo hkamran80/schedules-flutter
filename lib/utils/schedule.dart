@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../extensions/date.dart';
 import '../extensions/string.dart';
 import '../notification_constants.dart';
 import 'notification_service.dart';
@@ -185,7 +186,7 @@ class Schedule {
     if (currentPeriodExists) {
       int currentPeriodIndex = daySchedulePeriods.indexWhere(
           (period) => currentPeriod!.originalName == period.originalName);
-          
+
       return daySchedulePeriods.length - 1 == currentPeriodIndex
           ? null
           : daySchedulePeriods.elementAt(
@@ -195,6 +196,24 @@ class Schedule {
 
     return null;
   }
+
+  List<OffDay> get offDays {
+    List<OffDay> offDays = [];
+
+    for (MapEntry offDay in schedule["offDays"].entries) {
+      offDays.add(
+        OffDay(
+          offDay.key,
+          offDay.value[0].toString().toDate(),
+          offDay.value.length == 2 ? offDay.value[1].toString().toDate() : null,
+        ),
+      );
+    }
+
+    return offDays;
+  }
+
+  OffDay? get activeOffDay => offDays.firstWhere((offDay) => offDay.inEffect);
 
   bool get currentPeriodExists =>
       currentPeriod.runtimeType.toString().toLowerCase() != "null";
@@ -470,5 +489,26 @@ class PeriodTimes {
   @override
   String toString() {
     return "PeriodTimes(\"$start\", \"$end\")";
+  }
+}
+
+class OffDay {
+  String name;
+  DateTime startDate;
+  DateTime? endDate;
+
+  OffDay(this.name, this.startDate, this.endDate);
+
+  List<DateTime> get dateRange =>
+      endDate != null ? startDate.dateRange(endDate!) : [startDate];
+
+  bool get inEffect {
+    List<int> ymd = DateTime.now().ymd();
+    Function eq = const ListEquality().equals;
+
+    return dateRange
+        .map((date) => date.ymd())
+        .where((date) => eq(date, ymd))
+        .isNotEmpty;
   }
 }
