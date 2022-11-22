@@ -97,9 +97,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final schedulesData = Provider.of<SchedulesProvider>(context);
 
-    Map<String, VariantOrSchedule> schedulesList =
-        generateScheduleListWithVariants(
-      schedulesData.schedules,
+    Map<String, VariantOrSchedule> schedulesList = Map.fromEntries(
+      generateScheduleListWithVariants(
+        schedulesData.schedules,
+      ).entries.toList()
+        ..sort(
+          (schedule1, schedule2) => schedule1.value.comparableName.compareTo(
+            schedule2.value.comparableName,
+          ),
+        ),
     );
 
     SchedulerBinding.instance.addPostFrameCallback(

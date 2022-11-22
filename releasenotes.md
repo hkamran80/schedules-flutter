@@ -1,8 +1,14 @@
 # Release Notes
 
+## 1.0.2
+
+**Released to iOS on November 17, Android on November 20, 2022**
+
+- Fix period loading system (#39)
+
 ## 1.0.1
 
-**Pending release**
+**Released to iOS on November 17, Android on November 20, 2022**
 
 - Fix schedule periods bug (periods would be incorrect for that day) (#31)
 - Add schedule request form (#25)
