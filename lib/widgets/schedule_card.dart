@@ -27,6 +27,9 @@ class ScheduleCard extends StatelessWidget {
                 : Colors.white,
             alignment: Alignment.centerLeft,
             backgroundColor: backgroundColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
           ),
           onPressed: onPressed,
           child: Padding(
