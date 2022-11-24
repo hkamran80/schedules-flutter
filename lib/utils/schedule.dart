@@ -229,6 +229,8 @@ class Schedule {
         return override.value;
       }
     }
+
+    return null;
   }
 
   bool get currentPeriodExists =>
