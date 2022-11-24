@@ -12,7 +12,7 @@ To begin, clone this repository, then open it in your editor of choice. Schedule
 
 If you want to publish Schedules, keep this in mind about the Sentry SDK.
 
-- If you would like to use Sentry, create a `secrets.dart` file with two constants: `sentryDsn` and `sentryEnvironment`.
+- If you would like to use Sentry, create a `secrets.dart` file with two constants: `sentryDsn` and `sentryEnvironment`
 - If you do not want to use Sentry, remove the `sentry_flutter` package, all mentions of the Sentry SDK (`main.dart` and `secrets.dart`), and the conditional loading system in `main.dart`
 
 ## Contributing
