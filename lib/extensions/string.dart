@@ -16,8 +16,8 @@ extension StringDateTime on String {
   }
 
   String convertTime(bool hour24) => hour24
-      ? split("-").sublist(0, 2).join(":")
-      : replaceAll("-", ":").convertTo12Hour();
+      ? split(":").sublist(0, 2).join(":")
+      : convertTo12Hour();
 }
 
 extension StringRegExp on String {
