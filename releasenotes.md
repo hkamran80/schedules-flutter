@@ -2,7 +2,7 @@
 
 ## 1.0.3
 
-**Released to iOS on November 22, Android is still pending**
+**Released to iOS on November 22, Android on November 24, 2022**
 
 - Sort schedules list alphabetically (#42)
 - Add widget for schedule card (#43)
