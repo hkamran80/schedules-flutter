@@ -1,7 +1,7 @@
 const applicationName = "Schedules";
 
 Uri schedulesLink =
-    Uri.parse("https://cfg-schedules.unisontech.org/schedules/latest");
+    Uri.parse("https://cfg-schedules.unisontech.org/schedules/schema-3");
 
 Uri requestLink = Uri.parse("https://go.unisontech.org/schreq");
 Uri feedbackLink = Uri.parse("https://go.unisontech.org/sch-mobile-feedback");
