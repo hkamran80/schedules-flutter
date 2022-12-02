@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (kDebugMode) {
       print("Loading default schedule: \"$_defaultSchedule\"");
     }
-    context.go('/schedule/$_defaultSchedule');
+    context.push('/schedule/$_defaultSchedule');
   }
 
   @override
@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               IconButton(
-                onPressed: () => context.go("/settings"),
+                onPressed: () => context.push("/settings"),
                 icon: const Icon(
                   LucideIcons.settings,
                   size: 20,
@@ -170,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         HexColor.fromHex(schedule.value.color),
                                     onPressed: () {
                                       if (schedule.value.type == Schedule) {
-                                        context.go("/schedule/${schedule.key}");
+                                        context.push("/schedule/${schedule.key}");
                                       } else {
                                         showModalBottomSheet(
                                           elevation: 10,
@@ -219,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   schedule.value
                                                                       .color),
                                                           onPressed: () =>
-                                                              context.go(
+                                                              context.push(
                                                                   "/schedule/${variant.id}"),
                                                         ),
                                                       )
