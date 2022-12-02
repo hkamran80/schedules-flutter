@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +20,6 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({
     Key? key,
   }) : super(key: key);
-
-  static const routeName = "/";
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -83,14 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (kDebugMode) {
       print("Loading default schedule: \"$_defaultSchedule\"");
     }
-
-    Navigator.pushNamed(
-      ctx,
-      "/schedule",
-      arguments: ScheduleScreenArguments(
-        _defaultSchedule,
-      ),
-    );
+    context.go('/schedule/$_defaultSchedule');
   }
 
   @override
@@ -146,9 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, SettingsScreen.routeName);
-                },
+                onPressed: () => context.go("/settings"),
                 icon: const Icon(
                   LucideIcons.settings,
                   size: 20,
@@ -182,13 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         HexColor.fromHex(schedule.value.color),
                                     onPressed: () {
                                       if (schedule.value.type == Schedule) {
-                                        Navigator.pushNamed(
-                                          context,
-                                          ScheduleScreen.routeName,
-                                          arguments: ScheduleScreenArguments(
-                                            schedule.key,
-                                          ),
-                                        );
+                                        context.go("/schedule/${schedule.key}");
                                       } else {
                                         showModalBottomSheet(
                                           elevation: 10,
@@ -236,17 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               HexColor.fromHex(
                                                                   schedule.value
                                                                       .color),
-                                                          onPressed: () {
-                                                            Navigator.pushNamed(
-                                                              context,
-                                                              ScheduleScreen
-                                                                  .routeName,
-                                                              arguments:
-                                                                  ScheduleScreenArguments(
-                                                                variant.id,
-                                                              ),
-                                                            );
-                                                          },
+                                                          onPressed: () =>
+                                                              context.go(
+                                                                  "/schedule/${variant.id}"),
                                                         ),
                                                       )
                                                       .toList()
