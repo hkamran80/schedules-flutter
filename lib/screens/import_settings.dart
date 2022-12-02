@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:schedules/widgets/schedule_card.dart';
 
@@ -11,7 +12,6 @@ class ImportSettingsScreen extends StatefulWidget {
     required this.scheduleId,
   }) : super(key: key);
 
-  static const routeName = "/schedule/settingsImport";
   final String scheduleId;
 
   @override
@@ -92,7 +92,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                         );
 
                         if (result == "SUCCESS") {
-                          setState(() => Navigator.pop(context));
+                          setState(() => context.pop());
 
                           Fluttertoast.showToast(
                             msg: "Successfully imported settings!",

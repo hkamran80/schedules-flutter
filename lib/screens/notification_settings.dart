@@ -12,8 +12,7 @@ class ScheduleNotificationsSettingsScreen extends StatefulWidget {
     Key? key,
     required this.scheduleId,
   }) : super(key: key);
-
-  static const routeName = "/schedule/notifications";
+  
   final String scheduleId;
 
   @override

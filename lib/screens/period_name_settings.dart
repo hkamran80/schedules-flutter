@@ -11,8 +11,6 @@ class SchedulePeriodNamesSettingsScreen extends StatefulWidget {
     required this.scheduleId,
   }) : super(key: key);
 
-  static const routeName = "/schedule/periodNames";
-
   final String scheduleId;
 
   @override

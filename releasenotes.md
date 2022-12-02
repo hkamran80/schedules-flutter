@@ -1,5 +1,11 @@
 # Release Notes
 
+## 1.0.4
+
+**Unreleased**
+
+- Switch to [`go_router`](https://pub.dev/packages/go_router) (#51)
+
 ## 1.0.3
 
 **Released to iOS on November 22, Android on November 24, 2022**
