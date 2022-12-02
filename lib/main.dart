@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -41,19 +42,54 @@ Future<void> main() async {
   }
 }
 
+final _router = GoRouter(
+  initialLocation: "/",
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: "/schedule/:scheduleId",
+      builder: (context, state) => ScheduleScreen(
+        scheduleId: state.params["scheduleId"] as String,
+      ),
+    ),
+    GoRoute(
+      path: "/schedule/:scheduleId/notifications",
+      builder: (context, state) => ScheduleNotificationsSettingsScreen(
+        scheduleId: state.params["scheduleId"] as String,
+      ),
+    ),
+    GoRoute(
+      path: "/schedule/:scheduleId/periodNames",
+      builder: (context, state) => SchedulePeriodNamesSettingsScreen(
+        scheduleId: state.params["scheduleId"] as String,
+      ),
+    ),
+    GoRoute(
+      path: "/schedule/:scheduleId/settingsImport",
+      builder: (context, state) => ImportSettingsScreen(
+        scheduleId: state.params["scheduleId"] as String,
+      ),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/about',
+      builder: (context, state) => const AboutScreen(),
+    ),
+  ],
+);
+
 class SchedulesApp extends StatelessWidget {
   const SchedulesApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    String generateScreenWithId(BuildContext context) {
-      ScheduleScreenArguments args =
-          ModalRoute.of(context)!.settings.arguments as ScheduleScreenArguments;
-
-      return args.scheduleId;
-    }
-
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Schedules',
       theme: ThemeData(
         primarySwatch: Colors.pink,
@@ -97,26 +133,7 @@ class SchedulesApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      initialRoute: HomeScreen.routeName,
-      routes: {
-        HomeScreen.routeName: (context) => const HomeScreen(),
-        ScheduleScreen.routeName: (context) => ScheduleScreen(
-              scheduleId: generateScreenWithId(context),
-            ),
-        ScheduleNotificationsSettingsScreen.routeName: (context) =>
-            ScheduleNotificationsSettingsScreen(
-              scheduleId: generateScreenWithId(context),
-            ),
-        SchedulePeriodNamesSettingsScreen.routeName: (context) =>
-            SchedulePeriodNamesSettingsScreen(
-              scheduleId: generateScreenWithId(context),
-            ),
-        ImportSettingsScreen.routeName: (context) => ImportSettingsScreen(
-              scheduleId: generateScreenWithId(context),
-            ),
-        SettingsScreen.routeName: (context) => const SettingsScreen(),
-        AboutScreen.routeName: (context) => const AboutScreen(),
-      },
+      routerConfig: _router,
     );
   }
 }

@@ -1,5 +1,24 @@
 # Release Notes
 
+## 1.0.4
+
+**Unreleased**
+
+- Switch to [`go_router`](https://pub.dev/packages/go_router) (#51)
+
+## 1.0.3
+
+**Released to iOS on November 22, Android on November 24, 2022**
+
+- Sort schedules list alphabetically (#42)
+- Add widget for schedule card (#43)
+- Add location support (#44)
+- Switch to rounded rectangle buttons (#45)
+- Move import toasts to the bottom (#46)
+- Add off day support (#47)
+- Add override support (#48)
+- Switch to the new `cfg-schedules.unisontech.org` configuration host
+
 ## 1.0.2
 
 **Released to iOS on November 17, Android on November 20, 2022**

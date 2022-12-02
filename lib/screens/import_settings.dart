@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:schedules/widgets/schedule_card.dart';
 
 import '../provider/schedules.dart';
 
@@ -10,7 +12,6 @@ class ImportSettingsScreen extends StatefulWidget {
     required this.scheduleId,
   }) : super(key: key);
 
-  static const routeName = "/schedule/settingsImport";
   final String scheduleId;
 
   @override
@@ -81,12 +82,9 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                     maxLines: null,
                   ),
                   const SizedBox(height: 25),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      alignment: Alignment.centerLeft,
-                      backgroundColor: Colors.pink,
-                    ),
+                  ScheduleCard(
+                    name: "Import",
+                    backgroundColor: Colors.pink,
                     onPressed: () async {
                       if (importTextController.text.trim().isNotEmpty) {
                         String result = await schedule.importSettings(
@@ -94,12 +92,12 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                         );
 
                         if (result == "SUCCESS") {
-                          setState(() => Navigator.pop(context));
+                          setState(() => context.pop());
 
                           Fluttertoast.showToast(
                             msg: "Successfully imported settings!",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
+                            gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 1,
                             backgroundColor: Colors.green,
                             textColor: Colors.white,
@@ -109,7 +107,7 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                           Fluttertoast.showToast(
                             msg: "Error: $result",
                             toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
+                            gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 1,
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
@@ -118,20 +116,6 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                         }
                       }
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        0,
-                        15,
-                        0,
-                        15,
-                      ),
-                      child: Text(
-                        "Import",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ),
                   ),
                 ],
               ),

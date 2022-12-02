@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,9 +16,6 @@ import '../provider/schedules.dart';
 import '../utils/schedule.dart';
 import '../widgets/stacked_card.dart';
 import '../extensions/string.dart';
-import 'import_settings.dart';
-import 'notification_settings.dart';
-import 'period_name_settings.dart';
 
 class ScheduleScreenArguments {
   final String scheduleId;
@@ -31,7 +29,6 @@ class ScheduleScreen extends StatefulWidget {
     required this.scheduleId,
   }) : super(key: key);
 
-  static const routeName = "/schedule";
   final String scheduleId;
 
   @override
@@ -149,7 +146,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   onPressed: () => _showTimetable(
                     context,
                     schedule.daySchedule(
-                      threeLetterDay,
+                      schedule.override == null
+                          ? threeLetterDay
+                          : schedule.override!,
                     ),
                   ),
                   icon: const Icon(
@@ -198,29 +197,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ],
                 onSelected: (value) async {
                   if (value == "notifications") {
-                    Navigator.pushNamed(
-                      context,
-                      ScheduleNotificationsSettingsScreen.routeName,
-                      arguments: ScheduleScreenArguments(
-                        widget.scheduleId,
-                      ),
-                    );
+                    context.push("/schedule/${widget.scheduleId}/notifications");
                   } else if (value == "periodNames") {
-                    Navigator.pushNamed(
-                      context,
-                      SchedulePeriodNamesSettingsScreen.routeName,
-                      arguments: ScheduleScreenArguments(
-                        widget.scheduleId,
-                      ),
-                    );
+                    context.push("/schedule/${widget.scheduleId}/periodNames");
                   } else if (value == "importSettings") {
-                    Navigator.pushNamed(
-                      context,
-                      ImportSettingsScreen.routeName,
-                      arguments: ScheduleScreenArguments(
-                        widget.scheduleId,
-                      ),
-                    );
+                    context.push("/schedule/${widget.scheduleId}/settingsImport");
                   } else if (value == "exportSettings") {
                     Clipboard.setData(
                       ClipboardData(
@@ -261,68 +242,98 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ),
             sliver: SliverToBoxAdapter(
               key: ValueKey(_reloadKey),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    child: schedule.currentPeriodExists
-                        ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              StackedCard(
-                                header: schedule.currentPeriod!.name,
-                                content: schedule.timeRemaining,
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  Container(
-                    child: schedule.nextPeriodExists
-                        ? StackedCard(
-                            header: schedule.nextPeriod!.name,
-                            content:
-                                schedule.nextPeriod!.times.start.convertTime(
-                              _hour24Enabled,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  Container(
-                    child: !schedule.nextPeriodExists &&
-                            !schedule.currentPeriodExists
-                        ? Container(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  "No Active Period",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 36,
+              child: schedule.activeOffDay == null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          child: schedule.currentPeriodExists
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    StackedCard(
+                                      header: schedule.currentPeriod!.name,
+                                      content: schedule.timeRemaining,
+                                    ),
+                                    const SizedBox(height: 10),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        Container(
+                          child: schedule.nextPeriodExists
+                              ? StackedCard(
+                                  header: schedule.nextPeriod!.name,
+                                  content: schedule.nextPeriod!.times.start
+                                      .convertTime(
+                                    _hour24Enabled,
                                   ),
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  "The current schedule does not have any periods listed for the current time",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 18,
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        Container(
+                          child: !schedule.nextPeriodExists &&
+                                  !schedule.currentPeriodExists
+                              ? Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
                                   ),
-                                ),
-                              ],
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        "No Active Period",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 36,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10),
+                                      Text(
+                                        "This schedule does not have any periods listed for the current time",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    )
+                  : Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            schedule.activeOffDay!.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 36,
                             ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ],
-              ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            schedule.activeOffDay!.endDate == null
+                                ? "Enjoy your day off!"
+                                : "Enjoy your break! It ends on ${DateFormat.yMMMMd().format(schedule.activeOffDay!.endDate!)}.",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w400,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
             ),
           )
         ],

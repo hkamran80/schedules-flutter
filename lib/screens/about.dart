@@ -11,8 +11,6 @@ import '../widgets/about_card.dart';
 class AboutScreen extends StatefulWidget {
   const AboutScreen({Key? key}) : super(key: key);
 
-  static const routeName = "/about";
-
   @override
   State<AboutScreen> createState() => _AboutScreenState();
 }

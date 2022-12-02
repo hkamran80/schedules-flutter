@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../extensions/date.dart';
 import '../extensions/string.dart';
 import '../notification_constants.dart';
 import 'notification_service.dart';
@@ -99,11 +100,13 @@ class Schedule {
   }
 
   List<Period> get daySchedulePeriods => daySchedule(
-        DateFormat.E()
-            .format(
-              DateTime.now(),
-            )
-            .toUpperCase(),
+        override == null
+            ? DateFormat.E()
+                .format(
+                  DateTime.now(),
+                )
+                .toUpperCase()
+            : override!,
       );
 
   Period? get currentPeriod {
@@ -183,12 +186,48 @@ class Schedule {
 
   Period? get nextPeriod {
     if (currentPeriodExists) {
-      return daySchedulePeriods.length - 1 ==
-              daySchedulePeriods.indexOf(currentPeriod!)
+      int currentPeriodIndex = daySchedulePeriods.indexWhere(
+          (period) => currentPeriod!.originalName == period.originalName);
+
+      return daySchedulePeriods.length - 1 == currentPeriodIndex
           ? null
           : daySchedulePeriods.elementAt(
-              daySchedulePeriods.indexOf(currentPeriod!) + 1,
+              currentPeriodIndex + 1,
             );
+    }
+
+    return null;
+  }
+
+  List<OffDay> get offDays {
+    List<OffDay> offDays = [];
+
+    for (MapEntry offDay in schedule["offDays"].entries) {
+      offDays.add(
+        OffDay(
+          offDay.key,
+          offDay.value[0].toString().toDate(),
+          offDay.value.length == 2 ? offDay.value[1].toString().toDate() : null,
+        ),
+      );
+    }
+
+    return offDays;
+  }
+
+  OffDay? get activeOffDay =>
+      offDays.where((offDay) => offDay.inEffect).firstOrNull;
+
+  String? get override {
+    Function eq = const ListEquality().equals;
+
+    for (MapEntry override in schedule["overrides"].entries) {
+      if (eq(
+        override.key.split("-").toList().map(int.parse).toList(),
+        DateTime.now().ymd(),
+      )) {
+        return override.value;
+      }
     }
 
     return null;
@@ -468,5 +507,26 @@ class PeriodTimes {
   @override
   String toString() {
     return "PeriodTimes(\"$start\", \"$end\")";
+  }
+}
+
+class OffDay {
+  String name;
+  DateTime startDate;
+  DateTime? endDate;
+
+  OffDay(this.name, this.startDate, this.endDate);
+
+  List<DateTime> get dateRange =>
+      endDate != null ? startDate.dateRange(endDate!) : [startDate];
+
+  bool get inEffect {
+    List<int> ymd = DateTime.now().ymd();
+    Function eq = const ListEquality().equals;
+
+    return dateRange
+        .map((date) => date.ymd())
+        .where((date) => eq(date, ymd))
+        .isNotEmpty;
   }
 }

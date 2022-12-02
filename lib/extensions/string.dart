@@ -21,17 +21,26 @@ extension StringDateTime on String {
 }
 
 extension StringRegExp on String {
-  String slugify() =>
-      replaceAll(RegExp('[^A-Za-z0-9]'), "",).replaceAll(" ", "-").toLowerCase();
+  String slugify() => replaceAll(
+        RegExp('[^A-Za-z0-9]'),
+        "",
+      ).replaceAll(" ", "-").toLowerCase();
 }
 
 // Source: https://stackoverflow.com/a/29629114/7313822
 extension StringCasingExtension on String {
   String toCapitalized() =>
       length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
-      
+
   String toTitleCase() => replaceAll(RegExp(' +'), ' ')
       .split(' ')
       .map((str) => str.toCapitalized())
       .join(' ');
+}
+
+extension StringDate on String {
+  DateTime toDate() {
+    List<int> newDate = split("-").toList().map(int.parse).toList();
+    return DateTime(newDate[0], newDate[1], newDate[2]);
+  }
 }
