@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -15,9 +16,6 @@ import '../provider/schedules.dart';
 import '../utils/schedule.dart';
 import '../widgets/stacked_card.dart';
 import '../extensions/string.dart';
-import 'import_settings.dart';
-import 'notification_settings.dart';
-import 'period_name_settings.dart';
 
 class ScheduleScreenArguments {
   final String scheduleId;
@@ -31,7 +29,6 @@ class ScheduleScreen extends StatefulWidget {
     required this.scheduleId,
   }) : super(key: key);
 
-  static const routeName = "/schedule";
   final String scheduleId;
 
   @override
@@ -200,29 +197,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ],
                 onSelected: (value) async {
                   if (value == "notifications") {
-                    Navigator.pushNamed(
-                      context,
-                      ScheduleNotificationsSettingsScreen.routeName,
-                      arguments: ScheduleScreenArguments(
-                        widget.scheduleId,
-                      ),
-                    );
+                    context.push("/schedule/${widget.scheduleId}/notifications");
                   } else if (value == "periodNames") {
-                    Navigator.pushNamed(
-                      context,
-                      SchedulePeriodNamesSettingsScreen.routeName,
-                      arguments: ScheduleScreenArguments(
-                        widget.scheduleId,
-                      ),
-                    );
+                    context.push("/schedule/${widget.scheduleId}/periodNames");
                   } else if (value == "importSettings") {
-                    Navigator.pushNamed(
-                      context,
-                      ImportSettingsScreen.routeName,
-                      arguments: ScheduleScreenArguments(
-                        widget.scheduleId,
-                      ),
-                    );
+                    context.push("/schedule/${widget.scheduleId}/settingsImport");
                   } else if (value == "exportSettings") {
                     Clipboard.setData(
                       ClipboardData(
