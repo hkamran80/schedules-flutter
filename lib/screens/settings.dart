@@ -9,7 +9,6 @@ import '../extensions/color.dart';
 import '../provider/schedules.dart';
 import '../widgets/info_card.dart';
 import '../widgets/toggle_card.dart';
-import 'about.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({

@@ -13,8 +13,6 @@ import '../extensions/color.dart';
 import '../provider/schedules.dart';
 import '../utils/schedule.dart';
 import '../utils/schedule_variant.dart';
-import 'settings.dart';
-import 'schedule.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
