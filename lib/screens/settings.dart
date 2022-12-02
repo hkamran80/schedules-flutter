@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -149,9 +150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             actions: [
               IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, AboutScreen.routeName);
-                },
+                onPressed: () => context.push("/about"),
                 icon: const Icon(
                   LucideIcons.info,
                   size: 20,
