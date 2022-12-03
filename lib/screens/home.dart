@@ -80,7 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (kDebugMode) {
       print("Loading default schedule: \"$_defaultSchedule\"");
     }
-    context.push('/schedule/$_defaultSchedule');
+
+    if (GoRouter.of(context).location == "/") {
+      context.push('/schedule/$_defaultSchedule');
+    }
   }
 
   @override
@@ -170,7 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         HexColor.fromHex(schedule.value.color),
                                     onPressed: () {
                                       if (schedule.value.type == Schedule) {
-                                        context.push("/schedule/${schedule.key}");
+                                        context
+                                            .push("/schedule/${schedule.key}");
                                       } else {
                                         showModalBottomSheet(
                                           elevation: 10,
