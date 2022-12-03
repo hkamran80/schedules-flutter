@@ -254,6 +254,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 launchMode: LaunchMode.inAppWebView,
                               ),
                             ),
+                            ScheduleCard(
+                              name: "Feature request or bug report?",
+                              backgroundColor: HexColor.fromHex("#BE154D"),
+                              onPressed: () => _launchUrl(
+                                feedbackLink,
+                                launchMode: LaunchMode.inAppWebView,
+                              ),
+                            ),
                             const SizedBox(
                               height: 25,
                             ),
