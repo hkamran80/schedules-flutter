@@ -117,6 +117,59 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final schedules = Provider.of<SchedulesProvider>(context);
+
+    if (!schedules.scheduleMap.containsKey(widget.scheduleId)) {
+      // setState(() => context.go("/"));
+      WidgetsBinding.instance.addPostFrameCallback((_) => context.go("/"));
+      return Material(
+        color: backgroundColor,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar.medium(
+              backgroundColor: backgroundColor,
+              title: const Text(
+                "Unknown",
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.only(
+                left: 5.0,
+                right: 5.0,
+              ),
+              sliver: SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Unknown Schedule",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 36,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        "The schedule that attempted to open does not exist.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     final schedule = schedules.scheduleMap[widget.scheduleId]!;
 
     if (schedule.periods.isEmpty) {
@@ -138,6 +191,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             title: Text(
               schedule.shortName,
             ),
+            leading: Navigator.canPop(context)
+                ? null
+                : IconButton(
+                    onPressed: () => context.go("/"),
+                    icon: const Icon(
+                      LucideIcons.home,
+                      size: 20,
+                    ),
+                  ),
             actions: [
               if (schedule.periodSchedule.containsKey(
                 threeLetterDay,
@@ -197,11 +259,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ],
                 onSelected: (value) async {
                   if (value == "notifications") {
-                    context.push("/schedule/${widget.scheduleId}/notifications");
+                    context
+                        .push("/schedule/${widget.scheduleId}/notifications");
                   } else if (value == "periodNames") {
                     context.push("/schedule/${widget.scheduleId}/periodNames");
                   } else if (value == "importSettings") {
-                    context.push("/schedule/${widget.scheduleId}/settingsImport");
+                    context
+                        .push("/schedule/${widget.scheduleId}/settingsImport");
                   } else if (value == "exportSettings") {
                     Clipboard.setData(
                       ClipboardData(
