@@ -29,7 +29,7 @@ class SchedulesProvider with ChangeNotifier {
 
     if (network) {
       if (kDebugMode) {
-        print("Loading from UT...");
+        print("Loading from CFG...");
       }
 
       try {
@@ -61,7 +61,7 @@ class SchedulesProvider with ChangeNotifier {
           loadedFromNetwork = true;
 
           if (kDebugMode) {
-            print("Loaded from UT!");
+            print("Loaded from CFG!");
           }
 
           notifyListeners();
