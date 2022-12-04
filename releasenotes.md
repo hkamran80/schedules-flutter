@@ -6,8 +6,10 @@
 
 - Switch to [`go_router`](https://pub.dev/packages/go_router) (#51)
 - Add deep linking support (#54)
-- Disable navigating to the default schedule if the user has already navigated away (#56)
+- Disable navigating to the default schedule if the user has already navigated
+  away (#56)
 - Upgrade Flutter to 3.3.9 (#57)
+- Add feedback button to home screen (#58)
 
 ## 1.0.3
 
