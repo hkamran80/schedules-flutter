@@ -125,10 +125,10 @@ class Schedule {
       try {
         return daySchedulePeriods.firstWhere(
           (schedulePeriod) {
-            if (int.parse(schedulePeriod.times.start.replaceAll("-", "")) <=
+            if (int.parse(schedulePeriod.times.start.replaceAll(":", "")) <=
                     currentTime &&
                 currentTime <=
-                    int.parse(schedulePeriod.times.end.replaceAll("-", ""))) {
+                    int.parse(schedulePeriod.times.end.replaceAll(":", ""))) {
               if (_periodName != schedulePeriod.name) {
                 _notificationsScheduled = false;
                 _periodName = schedulePeriod.originalName;
@@ -157,7 +157,7 @@ class Schedule {
   String get timeRemaining {
     if (currentPeriodExists) {
       DateTime now = DateTime.now();
-      List<String> endTime = currentPeriod!.times.end.split("-");
+      List<String> endTime = currentPeriod!.times.end.split(":");
 
       Duration remaining = DateTime(
         now.year,
@@ -314,7 +314,7 @@ class Schedule {
         for (var interval in intervals) {
           DateTime scheduledTime = DateFormat("y-M-d H:m:s")
               .parse(
-                "${DateTime.now().toString().split(" ")[0]} ${currentPeriod!.times.end.replaceAll("-", ":")}",
+                "${DateTime.now().toString().split(" ")[0]} ${currentPeriod!.times.end}",
               )
               .subtract(interval.duration);
 
