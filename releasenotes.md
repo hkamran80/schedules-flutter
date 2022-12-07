@@ -10,6 +10,7 @@
   away (#56)
 - Upgrade Flutter to 3.3.9 (#57)
 - Add feedback button to home screen (#58)
+- Switch to schema version 3 (#60)
 
 ## 1.0.3
 
