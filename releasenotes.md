@@ -2,7 +2,7 @@
 
 ## 1.0.4
 
-**Unreleased**
+**Pending release**
 
 - Switch to [`go_router`](https://pub.dev/packages/go_router) (#51)
 - Add deep linking support (#54)
