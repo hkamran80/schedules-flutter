@@ -52,25 +52,25 @@ final _router = GoRouter(
     GoRoute(
       path: "/schedule/:scheduleId",
       builder: (context, state) => ScheduleScreen(
-        scheduleId: state.params["scheduleId"] as String,
+        scheduleId: state.pathParameters["scheduleId"] as String,
       ),
     ),
     GoRoute(
       path: "/schedule/:scheduleId/notifications",
       builder: (context, state) => ScheduleNotificationsSettingsScreen(
-        scheduleId: state.params["scheduleId"] as String,
+        scheduleId: state.pathParameters["scheduleId"] as String,
       ),
     ),
     GoRoute(
       path: "/schedule/:scheduleId/periodNames",
       builder: (context, state) => SchedulePeriodNamesSettingsScreen(
-        scheduleId: state.params["scheduleId"] as String,
+        scheduleId: state.pathParameters["scheduleId"] as String,
       ),
     ),
     GoRoute(
       path: "/schedule/:scheduleId/settingsImport",
       builder: (context, state) => ImportSettingsScreen(
-        scheduleId: state.params["scheduleId"] as String,
+        scheduleId: state.pathParameters["scheduleId"] as String,
       ),
     ),
     GoRoute(
