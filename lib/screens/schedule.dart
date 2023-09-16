@@ -171,7 +171,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
 
     final schedule = schedules.scheduleMap[widget.scheduleId]!;
-
     if (schedule.periods.isEmpty) {
       setState(
         () {
@@ -337,8 +336,27 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               : const SizedBox.shrink(),
                         ),
                         Container(
-                          child: !schedule.nextPeriodExists &&
-                                  !schedule.currentPeriodExists
+                          child: schedule.timeToNextPeriodExists
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    StackedCard(
+                                      header: schedule.timeToNextPeriod!.name,
+                                      content:
+                                          "${schedule.timeToNextPeriod!.times.start.convertTime(
+                                        _hour24Enabled,
+                                      )} — ${schedule.timeRemainingToNextPeriod}",
+                                    ),
+                                    const SizedBox(height: 10),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        Container(
+                          child: !schedule.currentPeriodExists &&
+                                  !schedule.nextPeriodExists &&
+                                  !schedule.timeToNextPeriodExists
                               ? Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 10,
@@ -349,7 +367,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "No Active Period",
+                                        "No Remaining Periods",
                                         style: TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 36,
@@ -357,7 +375,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       ),
                                       SizedBox(height: 10),
                                       Text(
-                                        "This schedule does not have any periods listed for the current time",
+                                        "There are no periods for the rest of the day",
                                         style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 18,
