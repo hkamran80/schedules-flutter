@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
@@ -275,15 +275,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       ),
                     ).then(
                       (_) {
-                        Fluttertoast.showToast(
-                          msg: "Exported settings!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
+                        // Fluttertoast.showToast(
+                        //   msg: "Exported settings!",
+                        //   toastLength: Toast.LENGTH_SHORT,
+                        //   gravity: ToastGravity.CENTER,
+                        //   timeInSecForIosWeb: 1,
+                        //   backgroundColor: Colors.green,
+                        //   textColor: Colors.white,
+                        //   fontSize: 16.0,
+                        // );
                       },
                     );
                   }
