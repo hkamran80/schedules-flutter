@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:schedules/widgets/schedule_card.dart';
@@ -94,25 +94,25 @@ class _ImportSettingsScreenState extends State<ImportSettingsScreen> {
                         if (result == "SUCCESS") {
                           setState(() => context.pop());
 
-                          Fluttertoast.showToast(
-                            msg: "Successfully imported settings!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.green,
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          );
+                          // Fluttertoast.showToast(
+                          //   msg: "Successfully imported settings!",
+                          //   toastLength: Toast.LENGTH_SHORT,
+                          //   gravity: ToastGravity.BOTTOM,
+                          //   timeInSecForIosWeb: 1,
+                          //   backgroundColor: Colors.green,
+                          //   textColor: Colors.white,
+                          //   fontSize: 16.0,
+                          // );
                         } else {
-                          Fluttertoast.showToast(
-                            msg: "Error: $result",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                            fontSize: 16.0,
-                          );
+                          // Fluttertoast.showToast(
+                          //   msg: "Error: $result",
+                          //   toastLength: Toast.LENGTH_SHORT,
+                          //   gravity: ToastGravity.BOTTOM,
+                          //   timeInSecForIosWeb: 1,
+                          //   backgroundColor: Colors.red,
+                          //   textColor: Colors.white,
+                          //   fontSize: 16.0,
+                          // );
                         }
                       }
                     },
