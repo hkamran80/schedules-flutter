@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print("Loading default schedule: \"$_defaultSchedule\"");
     }
 
-    if (GoRouter.of(context).location == "/") {
+    if (GoRouterState.of(context).uri.toString() == "/") {
       context.push('/schedule/$_defaultSchedule');
     }
   }

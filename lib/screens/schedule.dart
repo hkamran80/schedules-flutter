@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
@@ -142,9 +142,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     horizontal: 10,
                     vertical: 5,
                   ),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         "Unknown Schedule",
                         style: TextStyle(
@@ -171,7 +171,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
 
     final schedule = schedules.scheduleMap[widget.scheduleId]!;
-
     if (schedule.periods.isEmpty) {
       setState(
         () {
@@ -275,15 +274,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       ),
                     ).then(
                       (_) {
-                        Fluttertoast.showToast(
-                          msg: "Exported settings!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
+                        // Fluttertoast.showToast(
+                        //   msg: "Exported settings!",
+                        //   toastLength: Toast.LENGTH_SHORT,
+                        //   gravity: ToastGravity.CENTER,
+                        //   timeInSecForIosWeb: 1,
+                        //   backgroundColor: Colors.green,
+                        //   textColor: Colors.white,
+                        //   fontSize: 16.0,
+                        // );
                       },
                     );
                   }
@@ -337,19 +336,38 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               : const SizedBox.shrink(),
                         ),
                         Container(
-                          child: !schedule.nextPeriodExists &&
-                                  !schedule.currentPeriodExists
+                          child: schedule.timeToNextPeriodExists
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    StackedCard(
+                                      header: schedule.timeToNextPeriod!.name,
+                                      content:
+                                          "${schedule.timeToNextPeriod!.times.start.convertTime(
+                                        _hour24Enabled,
+                                      )} — ${schedule.timeRemainingToNextPeriod}",
+                                    ),
+                                    const SizedBox(height: 10),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                        Container(
+                          child: !schedule.currentPeriodExists &&
+                                  !schedule.nextPeriodExists &&
+                                  !schedule.timeToNextPeriodExists
                               ? Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 10,
                                     vertical: 5,
                                   ),
-                                  child: Column(
+                                  child: const Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
+                                    children: [
                                       Text(
-                                        "No Active Period",
+                                        "No Remaining Periods",
                                         style: TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 36,
@@ -357,7 +375,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       ),
                                       SizedBox(height: 10),
                                       Text(
-                                        "This schedule does not have any periods listed for the current time",
+                                        "There are no periods for the rest of the day",
                                         style: TextStyle(
                                           fontWeight: FontWeight.w400,
                                           fontSize: 18,

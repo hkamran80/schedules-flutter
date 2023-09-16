@@ -18,8 +18,8 @@ class NotificationService {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('ic_schedules_logo');
 
-    final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(
+    final DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
       requestSoundPermission: false,
       requestBadgePermission: false,
       requestAlertPermission: false,
@@ -34,11 +34,11 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: _selectNotification,
+      onDidReceiveNotificationResponse: _selectNotification,
     );
   }
 
-  void _selectNotification(String? payload) async {}
+  void _selectNotification(NotificationResponse response) async {}
 
   void _onDidReceiveLocalNotification(
     int id,
@@ -64,7 +64,7 @@ class NotificationService {
       priority: priority ?? Priority.defaultPriority,
     );
 
-    IOSNotificationDetails iosPlatformChannelSpecifics = IOSNotificationDetails(
+    DarwinNotificationDetails iosPlatformChannelSpecifics = DarwinNotificationDetails(
       presentAlert: true,
       threadIdentifier: channelId,
       subtitle: subtitle,
@@ -132,7 +132,7 @@ class NotificationService {
       ),
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.exact,
     );
 
 
