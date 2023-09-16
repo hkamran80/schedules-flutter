@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:schedules/utils/datetime.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../extensions/date.dart';
@@ -11,6 +12,7 @@ import '../extensions/string.dart';
 import '../notification_constants.dart';
 import 'notification_service.dart';
 
+// TODO: Add `fixOffsetTime` from web to fix `11:09 AM`
 class Schedule {
   String scheduleId;
   Map<dynamic, dynamic> schedule;
@@ -109,9 +111,7 @@ class Schedule {
             : override!,
       );
 
-  Period? get currentPeriod {
-    if (periods.isNotEmpty) {
-      int currentTime = int.parse(
+  int getCurrentTime() => int.parse(
         DateFormat.Hms()
             .format(
               DateTime.now(),
@@ -122,24 +122,26 @@ class Schedule {
             ),
       );
 
-      try {
-        return daySchedulePeriods.firstWhere(
-          (schedulePeriod) {
-            if (int.parse(schedulePeriod.times.start.replaceAll(":", "")) <=
-                    currentTime &&
-                currentTime <=
-                    int.parse(schedulePeriod.times.end.replaceAll(":", ""))) {
-              if (_periodName != schedulePeriod.name) {
-                _notificationsScheduled = false;
-                _periodName = schedulePeriod.originalName;
-              }
+  Period? get currentPeriod {
+    if (periods.isNotEmpty) {
+      int currentTime = getCurrentTime();
 
-              return true;
-            } else {
-              return false;
+      try {
+        return daySchedulePeriods.firstWhereOrNull((schedulePeriod) {
+          if (int.parse(schedulePeriod.times.start.replaceAll(":", "")) <=
+                  currentTime &&
+              currentTime <=
+                  int.parse(schedulePeriod.times.end.replaceAll(":", ""))) {
+            if (_periodName != schedulePeriod.name) {
+              _notificationsScheduled = false;
+              _periodName = schedulePeriod.originalName;
             }
-          },
-        );
+
+            return true;
+          } else {
+            return false;
+          }
+        },);
       } catch (error) {
         if (kDebugMode) {
           print(error);
@@ -156,29 +158,15 @@ class Schedule {
 
   String get timeRemaining {
     if (currentPeriodExists) {
-      DateTime now = DateTime.now();
-      List<String> endTime = currentPeriod!.times.end.split(":");
-
-      Duration remaining = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(endTime[0]),
-        int.parse(endTime[1]),
-        int.parse(endTime[2]),
-      ).difference(
-        DateTime.now(),
-      );
-
-      String hours = remaining.inHours.twoDigits();
-      String minutes = remaining.inMinutes.remainder(60).twoDigits();
-      String seconds = remaining.inSeconds.remainder(60).twoDigits();
+      TimeRemaining timeRemaining =
+          calculateTimeRemaining(currentPeriod!.times.end);
 
       if (!_notificationsScheduled) {
-        _notify(remaining);
-        _scheduleNotifications(remaining);
+        _notify(timeRemaining.remaining);
+        _scheduleNotifications(timeRemaining.remaining);
       }
-      return "$hours:$minutes:$seconds";
+
+      return timeRemaining.countdown;
     }
 
     return "";
@@ -197,6 +185,42 @@ class Schedule {
     }
 
     return null;
+  }
+
+  Period? get timeToNextPeriod {
+    if (periods.isNotEmpty && !currentPeriodExists) {
+      int currentTime = getCurrentTime();
+
+      try {
+        return daySchedulePeriods.firstWhereOrNull((schedulePeriod) {
+          if (int.parse(schedulePeriod.times.start.replaceAll(":", "")) >=
+              currentTime) {
+            return true;
+          }
+
+          return false;
+        });
+      } catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  String get timeRemainingToNextPeriod {
+    if (timeToNextPeriodExists) {
+      TimeRemaining timeRemaining =
+          calculateTimeRemaining(timeToNextPeriod!.times.start);
+
+      return timeRemaining.countdown;
+    }
+
+    return "";
   }
 
   List<OffDay> get offDays {
@@ -238,6 +262,9 @@ class Schedule {
 
   bool get nextPeriodExists =>
       nextPeriod.runtimeType.toString().toLowerCase() != "null";
+
+  bool get timeToNextPeriodExists =>
+      timeToNextPeriod.runtimeType.toString().toLowerCase() != "null";
 
   Future<void> _notify(Duration remaining) async {
     if (currentPeriodExists) {
