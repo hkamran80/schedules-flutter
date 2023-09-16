@@ -113,11 +113,11 @@ class SchedulesApp extends StatelessWidget {
         ),
         textTheme: GoogleFonts.nunitoSansTextTheme(
           const TextTheme(
-            subtitle1: TextStyle(
+            titleMedium: TextStyle(
               color: Colors.white,
               fontSize: 20.0,
             ),
-            subtitle2: TextStyle(
+            titleSmall: TextStyle(
               color: Colors.white70,
               fontSize: 18.0,
             ),
@@ -128,8 +128,53 @@ class SchedulesApp extends StatelessWidget {
           selectionColor: Colors.pink,
           selectionHandleColor: Colors.pink,
         ),
-        toggleableActiveColor: Colors.pink,
         primaryColor: Colors.white,
+        checkboxTheme: CheckboxThemeData(
+          fillColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return null;
+            }
+            if (states.contains(MaterialState.selected)) {
+              return Colors.pink;
+            }
+            return null;
+          }),
+        ),
+        radioTheme: RadioThemeData(
+          fillColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return null;
+            }
+            if (states.contains(MaterialState.selected)) {
+              return Colors.pink;
+            }
+            return null;
+          }),
+        ),
+        switchTheme: SwitchThemeData(
+          thumbColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return null;
+            }
+            if (states.contains(MaterialState.selected)) {
+              return Colors.pink;
+            }
+            return null;
+          }),
+          trackColor: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return null;
+            }
+            if (states.contains(MaterialState.selected)) {
+              return Colors.pink;
+            }
+            return null;
+          }),
+        ),
       ),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,

@@ -142,9 +142,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     horizontal: 10,
                     vertical: 5,
                   ),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         "Unknown Schedule",
                         style: TextStyle(
@@ -344,10 +344,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                     horizontal: 10,
                                     vertical: 5,
                                   ),
-                                  child: Column(
+                                  child: const Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: const [
+                                    children: [
                                       Text(
                                         "No Active Period",
                                         style: TextStyle(
